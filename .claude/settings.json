@@ -29,7 +29,13 @@
       "PowerShell(Stop-Process -Id 45096,6956 -Force -ErrorAction SilentlyContinue)",
       "PowerShell(Get-NetTCPConnection -LocalPort 3000,4000 -State Listen -ErrorAction SilentlyContinue)",
       "Bash(curl -sS http://localhost:3000/ -m 30)",
-      "Bash(grep -oE \"rgba\\\\\\(8[^\\\\\"]{0,30}\")"
+      "Bash(grep -oE \"rgba\\\\\\(8[^\\\\\"]{0,30}\")",
+      "Bash(npx prisma *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(sed -n '55,65p' admin/admin.service.ts)",
+      "Bash(sed -n '20,30p' catalog/catalog.controller.ts)",
+      "Bash(npx tsc *)"
     ]
   }
 }
