@@ -1,4 +1,5 @@
 FROM node:22-alpine AS base
+RUN apk add --no-cache openssl
 RUN npm install -g pnpm
 WORKDIR /app
 
@@ -15,8 +16,10 @@ COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY . .
 RUN pnpm --filter @topup/shared build
 RUN pnpm --filter api build
+RUN cd apps/api && npx prisma generate
 
 FROM node:22-alpine AS runner
+RUN apk add --no-cache openssl
 RUN npm install -g pnpm
 WORKDIR /app
 ENV NODE_ENV=production
@@ -35,5 +38,4 @@ USER appuser
 
 EXPOSE 4000
 
-# Run migrations then start the server
 CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && cd /app && node apps/api/dist/main.js"]
