@@ -13,6 +13,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
+RUN rm -f apps/web/playwright.config.ts && rm -rf apps/web/e2e
 RUN pnpm --filter @topup/shared build
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm --filter web build
