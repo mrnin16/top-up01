@@ -1,3 +1,4 @@
+# Build v4 — openssl + prisma generate before nest build
 FROM node:22-alpine AS base
 RUN apk add --no-cache openssl
 RUN npm install -g pnpm

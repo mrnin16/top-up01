@@ -22,7 +22,7 @@ export class CatalogController {
         key: { in: ['khqrImageUrl', 'khqrMerchantName', 'khqrMerchantId', 'khqrAccountNo', 'khqrCity', 'announcementText', 'uiMode'] },
       },
     });
-    return Object.fromEntries(rows.map(r => [r.key, r.value]));
+    return Object.fromEntries(rows.map((r: { key: string; value: string }) => [r.key, r.value]));
   }
 
   @Get('categories')

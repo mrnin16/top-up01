@@ -57,7 +57,7 @@ export class AdminService {
   // ── Settings ─────────────────────────────────────────────────────────────────
   async getSettings() {
     const rows = await this.prisma.setting.findMany();
-    return Object.fromEntries(rows.map(r => [r.key, r.value]));
+    return Object.fromEntries(rows.map((r: { key: string; value: string }) => [r.key, r.value]));
   }
 
   async updateSettings(data: Record<string, string>) {
