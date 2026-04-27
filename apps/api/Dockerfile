@@ -14,9 +14,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY . .
+# Generate Prisma client BEFORE compiling TypeScript
+RUN cd apps/api && npx prisma generate
 RUN pnpm --filter @topup/shared build
 RUN pnpm --filter api build
-RUN cd apps/api && npx prisma generate
 
 FROM node:22-alpine AS runner
 RUN apk add --no-cache openssl
