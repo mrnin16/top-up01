@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where pnpm *)",
+      "Bash(where node *)",
+      "Bash(where docker *)",
+      "Bash(docker info *)",
+      "Bash(docker-compose -f d:/topup/Top-up/docker-compose.yml --project-directory d:/topup/Top-up up -d postgres redis mailhog)",
+      "Bash(pnpm rebuild *)",
+      "Bash(pnpm --filter api exec prisma generate)",
+      "Bash(pnpm --filter api exec prisma migrate dev --name init)",
+      "Bash(DATABASE_URL=\"postgresql://topup:topup@localhost:5433/topup\" pnpm --filter api exec prisma migrate dev --name init)",
+      "Bash(DATABASE_URL=\"postgresql://topup:topup@localhost:5433/topup\" pnpm --filter api exec prisma db seed)",
+      "Bash(docker exec *)",
+      "Bash(pnpm --filter api dev)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4000/healthz)",
+      "Bash(curl -s -m 3 http://localhost:4000/healthz)",
+      "Bash(pkill -f \"nest start\")",
+      "Bash(pnpm install *)",
+      "Bash(pnpm --filter @topup/shared build)",
+      "Bash(curl -s -m 2 http://localhost:4000/healthz)",
+      "Bash(curl -s http://localhost:4000/healthz)",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\")",
+      "Bash(DATABASE_URL=\"postgresql://topup:topup@localhost:5433/topup\" pnpm --filter api exec prisma migrate dev --name admin_fields)",
+      "Bash(pnpm --filter api add @nestjs/serve-static multer)",
+      "Bash(pnpm --filter api add -D @types/multer)",
+      "Bash(pnpm --filter api exec tsc)",
+      "Bash(echo \"exit=$?\")",
+      "PowerShell(Stop-Process -Id 45096,6956 -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000,4000 -State Listen -ErrorAction SilentlyContinue)",
+      "Bash(curl -sS http://localhost:3000/ -m 30)",
+      "Bash(grep -oE \"rgba\\\\\\(8[^\\\\\"]{0,30}\")"
+    ]
+  }
+}

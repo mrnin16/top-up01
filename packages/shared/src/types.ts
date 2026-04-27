@@ -1,0 +1,22 @@
+import { z } from 'zod';
+import {
+  RegisterSchema,
+  LoginSchema,
+  OtpSendSchema,
+  OtpVerifySchema,
+  ValidateAccountSchema,
+  CreateOrderSchema,
+  InitiateKhqrSchema,
+  InitiateBankSchema,
+  InitiateCardSchema,
+} from './schemas.js';
+
+export type RegisterDto       = z.infer<typeof RegisterSchema>;
+export type LoginDto          = z.infer<typeof LoginSchema>;
+export type OtpSendDto        = z.infer<typeof OtpSendSchema>;
+export type OtpVerifyDto      = z.infer<typeof OtpVerifySchema>;
+export type ValidateAccountDto = z.infer<typeof ValidateAccountSchema>;
+export type CreateOrderDto    = z.infer<typeof CreateOrderSchema>;
+export type InitiateKhqrDto   = z.infer<typeof InitiateKhqrSchema>;
+export type InitiateBankDto   = z.infer<typeof InitiateBankSchema>;
+export type InitiateCardDto   = z.infer<typeof InitiateCardSchema>;

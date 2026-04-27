@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Users ────────────────────────────────────────────────────────────────────
+model User {
+  id              String        @id @default(cuid())
+  email           String?       @unique
+  phone           String?       @unique
+  name            String
+  passwordHash    String?
+  role            Role          @default(USER)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime      @default(now())
+  orders          Order[]
+  gameAccounts    GameAccount[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// ── Catalog ──────────────────────────────────────────────────────────────────
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  label     String
+  icon      String
+  sortOrder Int       @default(0)
+  products  Product[]
+}
+
+model Product {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  sub             String
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id])
+  currencyLabel   String
+  supportsDirect  Boolean   @default(true)
+  supportsCode    Boolean   @default(true)
+  gradFrom        String
+  gradTo          String
+  emblem          String
+  imageUrl        String?                       // uploaded product card image
+  currencyImageUrl String?                      // diamond/gem/coin icon shown on packages
+  hot             Boolean   @default(false)
+  isNew           Boolean   @default(false)
+  vip             Boolean   @default(false)     // VIP badge
+  discountPercent Int       @default(0)         // 0-100 % off all packages
+  active          Boolean   @default(true)
+  packages        Package[]
+  orders          Order[]
+}
+
+model Package {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  amount     Int
+  bonus      Int      @default(0)
+  priceCents Int
+  popular    Boolean  @default(false)
+  best       Boolean  @default(false)
+  sortOrder  Int      @default(0)
+  active     Boolean  @default(true)
+  orders     Order[]
+}
+
+model GameAccount {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  productId   String
+  gameUserId  String
+  zoneId      String
+  displayName String?
+  lastUsedAt  DateTime?
+
+  @@unique([userId, productId, gameUserId, zoneId])
+}
+
+// ── Platform settings (KV) ───────────────────────────────────────────────────
+// Keys: khqrImageUrl, khqrMerchantName, khqrMerchantId, announcementText, ...
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ── Orders ───────────────────────────────────────────────────────────────────
+model Order {
+  id             String      @id @default(cuid())
+  ref            String      @unique
+  userId         String?
+  user           User?       @relation(fields: [userId], references: [id])
+  productId      String
+  product        Product     @relation(fields: [productId], references: [id])
+  packageId      String
+  package        Package     @relation(fields: [packageId], references: [id])
+  method         TopupMethod
+  gameUserId     String?
+  zoneId         String?
+  subtotalCents  Int
+  discountCents  Int         @default(0)        // amount saved (for receipt display)
+  feeCents       Int
+  totalCents     Int
+  currency       String      @default("USD")
+  status         OrderStatus @default(PENDING)
+  redeemCode     String?
+  deliveredAt    DateTime?
+  createdAt      DateTime    @default(now())
+  payments       Payment[]
+  audits         AuditLog[]
+}
+
+enum TopupMethod {
+  DIRECT
+  CODE
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  DELIVERING
+  DELIVERED
+  FAILED
+  REFUNDED
+}
+
+// ── Payments ─────────────────────────────────────────────────────────────────
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id])
+  method      PaymentMethod
+  provider    String
+  providerRef String?
+  status      PaymentStatus @default(INITIATED)
+  amountCents Int
+  raw         Json?
+  createdAt   DateTime      @default(now())
+
+  @@index([providerRef])
+}
+
+enum PaymentMethod {
+  KHQR
+  BANK
+  CARD
+}
+
+enum PaymentStatus {
+  INITIATED
+  PENDING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+}
+
+model WebhookEvent {
+  id          String    @id @default(cuid())
+  provider    String
+  eventId     String
+  payload     Json
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  @@unique([provider, eventId])
+}
+
+// ── Audit ────────────────────────────────────────────────────────────────────
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String
+  meta      Json?
+  createdAt DateTime @default(now())
+  orderId   String?
+  order     Order?   @relation(fields: [orderId], references: [id])
+}

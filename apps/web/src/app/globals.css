@@ -1,0 +1,1676 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg:           #f7f8fb;
+  --surface:      #ffffff;
+  --surface-2:    #f1f3f8;
+  --line:         #e6e8ef;
+  --line-strong:  #d6dae4;
+  --ink:          #0e1220;
+  --ink-2:        #2b3142;
+  --muted:        #6b7388;
+  --muted-2:      #9aa1b3;
+  --brand:        #2563eb;
+  --brand-ink:    #ffffff;
+  --brand-soft:   #e7eeff;
+  --accent:       #f59e0b;
+  --success:      #16a34a;
+  --danger:       #dc2626;
+  --shadow-sm:    0 1px 2px rgba(15,18,32,.04), 0 1px 1px rgba(15,18,32,.03);
+  --shadow-md:    0 6px 16px rgba(15,18,32,.06), 0 2px 4px rgba(15,18,32,.04);
+  --shadow-lg:    0 24px 60px -20px rgba(15,18,32,.18), 0 8px 24px -8px rgba(15,18,32,.08);
+  --radius-sm:    8px;
+  --radius:       12px;
+  --radius-lg:    16px;
+  --radius-xl:    22px;
+}
+
+[data-theme="dark"] {
+  --bg:           #0a0d18;
+  --surface:      #11151f;
+  --surface-2:    #161b29;
+  --line:         #1f2638;
+  --line-strong:  #2a334a;
+  --ink:          #f1f3fa;
+  --ink-2:        #cad0e0;
+  --muted:        #8993ac;
+  --muted-2:      #5f6781;
+  --brand-soft:   #16224a;
+  --shadow-sm:    0 1px 2px rgba(0,0,0,.5);
+  --shadow-md:    0 8px 20px rgba(0,0,0,.4);
+  --shadow-lg:    0 24px 60px rgba(0,0,0,.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: default; }
+input, select, textarea { font-family: inherit; color: inherit; }
+
+@keyframes route-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.route-content { animation: route-fade-in 0.2s ease both; }
+
+@keyframes pulse  { 50% { transform: scale(1.5); opacity: .4; } }
+@keyframes ring   { from { transform: scale(.7); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ✨ LIQUID GLASS — iOS 26-style refined frosted glass UI
+   Activated by [data-ui-mode="liquid"] on <html>
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] {
+  /* Surface variables become translucent — backdrop-filter shines through */
+  --surface:      rgba(255, 255, 255, 0.42);
+  --surface-2:    rgba(255, 255, 255, 0.22);
+  --line:         rgba(255, 255, 255, 0.5);
+  --line-strong:  rgba(255, 255, 255, 0.7);
+  --ink:          #0a0a14;
+  --ink-2:        #1a1a28;
+  --muted:        rgba(20, 20, 35, 0.62);
+  --muted-2:      rgba(20, 20, 35, 0.4);
+
+  /* Glass shadow tokens — top highlight + soft outer drop */
+  --glass-shadow-sm:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.03) inset,
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 8px 24px -6px rgba(0, 0, 0, 0.12);
+  --glass-shadow-md:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.04) inset,
+    0 2px 6px rgba(0, 0, 0, 0.05),
+    0 16px 36px -10px rgba(0, 0, 0, 0.18);
+  --glass-shadow-lg:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.06) inset,
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 32px 64px -16px rgba(0, 0, 0, 0.28);
+
+  --shadow-sm: var(--glass-shadow-sm);
+  --shadow-md: var(--glass-shadow-md);
+  --shadow-lg: var(--glass-shadow-lg);
+}
+
+/* Animated vibrant gradient — slower cycle + smaller bg-size = less repaint cost */
+@keyframes liquid-bg {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+[data-ui-mode="liquid"] body {
+  background: linear-gradient(135deg,
+    #ff9a9e 0%, #fad0c4 18%, #ffd1ff 36%,
+    #c2e9fb 54%, #a1c4fd 72%, #84fab0 90%, #8fd3f4 100%);
+  background-size: 200% 200%;
+  animation: liquid-bg 40s linear infinite;
+  min-height: 100vh;
+  /* Force GPU compositing so the gradient doesn't repaint other layers */
+  will-change: background-position;
+  transform: translateZ(0);
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] {
+  --surface:      rgba(20, 18, 40, 0.45);
+  --surface-2:    rgba(20, 18, 40, 0.28);
+  --line:         rgba(255, 255, 255, 0.18);
+  --line-strong:  rgba(255, 255, 255, 0.34);
+  --ink:          rgba(255, 255, 255, 0.96);
+  --ink-2:        rgba(255, 255, 255, 0.82);
+  --muted:        rgba(255, 255, 255, 0.62);
+  --muted-2:      rgba(255, 255, 255, 0.42);
+
+  --glass-shadow-sm:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.3) inset,
+    0 8px 24px -6px rgba(0, 0, 0, 0.5);
+  --glass-shadow-md:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.4) inset,
+    0 16px 36px -10px rgba(0, 0, 0, 0.6);
+  --glass-shadow-lg:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 -1px 3px rgba(0, 0, 0, 0.5) inset,
+    0 32px 64px -16px rgba(0, 0, 0, 0.7);
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] body {
+  background: linear-gradient(135deg,
+    #1a0033 0%, #4a148c 16%, #00838f 34%,
+    #1a237e 56%, #3f0070 78%, #0f0635 100%);
+  background-size: 200% 200%;
+  animation: liquid-bg 40s linear infinite;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Spring transitions — Apple-style "elastic" easing for everything
+   ⚡ NEVER animate backdrop-filter — it's the most expensive transition possible.
+      We animate transform/opacity/box-shadow instead.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] *,
+[data-ui-mode="liquid"] *::before,
+[data-ui-mode="liquid"] *::after {
+  transition-property: background-color, border-color, box-shadow, transform, opacity, filter;
+  transition-duration: 0.28s;
+  transition-timing-function: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Universal glass surface — applied to anything rounded with a surface bg
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* All cards / panels — rounded containers with surface background */
+[data-ui-mode="liquid"] aside,
+[data-ui-mode="liquid"] [class*="rounded-2xl"],
+[data-ui-mode="liquid"] [class*="rounded-3xl"],
+[data-ui-mode="liquid"] [class*="rounded-[22px]"],
+[data-ui-mode="liquid"] [class*="rounded-[28px]"] {
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: var(--glass-shadow-md) !important;
+  /* Isolate paint so child changes don't invalidate the parent's blur */
+  contain: layout style;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] aside,
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-2xl"],
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-3xl"],
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-[22px]"],
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-[28px]"] {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Smaller rounded elements (cards, items) */
+[data-ui-mode="liquid"] [class*="rounded-xl"]:not(button):not(input):not(label):not([role="switch"]) {
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Pills / badges / chips — that signature floating glass look (the user's screenshot!)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] [class*="rounded-full"] {
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.04) inset,
+    0 4px 12px -3px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Pills/badges that have explicit translucent backgrounds (like the Instant/Official/4.9★ in screenshot) */
+[data-ui-mode="liquid"] [class*="rounded-full"][style*="rgba(255,255,255"] {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.28) 100%) !important;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-full"] {
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.2) inset,
+    0 4px 12px -3px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Buttons — translucent glass with specular shine
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] button:not([disabled]),
+[data-ui-mode="liquid"] [role="button"]:not([disabled]) {
+  position: relative;
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+}
+
+/* Hover lift — light press */
+[data-ui-mode="liquid"] button:not([disabled]):hover,
+[data-ui-mode="liquid"] [role="button"]:not([disabled]):hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+[data-ui-mode="liquid"] button:not([disabled]):active,
+[data-ui-mode="liquid"] [role="button"]:not([disabled]):active {
+  transform: translateY(0) scale(0.97);
+  filter: brightness(0.96);
+}
+
+/* Specular shine on solid-color buttons (CTA, brand-colored) */
+[data-ui-mode="liquid"] button[style*="var(--brand)"]:not([disabled])::before,
+[data-ui-mode="liquid"] .cta:not([disabled])::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.32) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Inputs — translucent with crisp readability
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] input[type="text"],
+[data-ui-mode="liquid"] input[type="email"],
+[data-ui-mode="liquid"] input[type="password"],
+[data-ui-mode="liquid"] input[type="number"],
+[data-ui-mode="liquid"] input[type="search"],
+[data-ui-mode="liquid"] input[type="tel"],
+[data-ui-mode="liquid"] input[type="url"],
+[data-ui-mode="liquid"] textarea,
+[data-ui-mode="liquid"] select {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.35) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+[data-ui-mode="liquid"] input:focus,
+[data-ui-mode="liquid"] textarea:focus,
+[data-ui-mode="liquid"] select:focus {
+  border-color: var(--brand) !important;
+  box-shadow:
+    0 0 0 3px color-mix(in oklab, var(--brand) 22%, transparent),
+    0 1px 0 rgba(255, 255, 255, 0.85) inset !important;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] input[type="text"],
+[data-ui-mode="liquid"][data-theme="dark"] input[type="email"],
+[data-ui-mode="liquid"][data-theme="dark"] input[type="password"],
+[data-ui-mode="liquid"][data-theme="dark"] input[type="number"],
+[data-ui-mode="liquid"][data-theme="dark"] textarea {
+  background: linear-gradient(180deg, rgba(20,18,40,0.45), rgba(20,18,40,0.25)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ⭐ STICKY / FIXED elements — STRONGER blur (these float over scrolling content)
+   This handles TopNav, mobile bottom bars, sticky sidebars, etc.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] .sticky,
+[data-ui-mode="liquid"] [class*="sticky"]:not([class*="non-sticky"]),
+[data-ui-mode="liquid"] [class*="fixed"],
+[data-ui-mode="liquid"] nav.topnav,
+[data-ui-mode="liquid"] .m-tab,
+[data-ui-mode="liquid"] [style*="position: sticky"],
+[data-ui-mode="liquid"] [style*="position:sticky"],
+[data-ui-mode="liquid"] [style*="position: fixed"],
+[data-ui-mode="liquid"] [style*="position:fixed"] {
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 8px 32px -8px rgba(0, 0, 0, 0.18) !important;
+  /* Isolate sticky/fixed elements to their own compositor layer */
+  transform: translateZ(0);
+  contain: layout style;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] .sticky,
+[data-ui-mode="liquid"][data-theme="dark"] [class*="sticky"],
+[data-ui-mode="liquid"][data-theme="dark"] [class*="fixed"],
+[data-ui-mode="liquid"][data-theme="dark"] nav.topnav,
+[data-ui-mode="liquid"][data-theme="dark"] .m-tab {
+  background: rgba(20, 18, 40, 0.55) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 8px 32px -8px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* TopNav stays at the same blur as other sticky elements (cheaper than 40px) */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   POPUPS / DIALOGS — vibrant blurred overlay
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Dialog backdrop — keep the overlay color but moderate blur */
+[data-ui-mode="liquid"] [style*="rgba(8,12,24"] {
+  background: linear-gradient(135deg,
+    rgba(80, 60, 200, 0.32),
+    rgba(180, 80, 200, 0.28)) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] [style*="rgba(8,12,24"] {
+  background: linear-gradient(135deg,
+    rgba(20, 10, 60, 0.65),
+    rgba(60, 20, 80, 0.55)) !important;
+}
+
+/* Dialog panel itself — moderate glass (the backdrop already provides the blur) */
+[data-ui-mode="liquid"] [class*="rounded-t-[28px]"],
+[data-ui-mode="liquid"] [class*="rounded-[28px]"] {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.78) 0%,
+    rgba(255, 255, 255, 0.55) 100%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.06) inset,
+    0 32px 80px -16px rgba(0, 0, 0, 0.35) !important;
+  /* Isolate dialog paint from page */
+  contain: layout style;
+  transform: translateZ(0);
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-t-[28px]"],
+[data-ui-mode="liquid"][data-theme="dark"] [class*="rounded-[28px]"] {
+  background: linear-gradient(180deg,
+    rgba(30, 28, 60, 0.7) 0%,
+    rgba(20, 18, 40, 0.5) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Banners with explicit color gradients (like the product banner with FF orange)
+   Apply a subtle frost overlay so titles stay readable
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] [style*="radial-gradient"][style*="oklab"] {
+  position: relative;
+}
+[data-ui-mode="liquid"] [style*="radial-gradient"][style*="oklab"]::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(0, 0, 0, 0.05) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Don't blur things that need crisp pixels (QR codes, images)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] svg.text-2xl,
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-2xl"][class*="border"] > div,
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-3xl"] > div {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* QR code container — must stay opaque */
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-2xl"][class*="border"]:has(svg),
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-3xl"]:has(svg),
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-2xl"][class*="border"]:has(img),
+[data-ui-mode="liquid"] [class*="bg-white"][class*="rounded-3xl"]:has(img) {
+  background: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Smooth scroll on the whole page when liquid mode is on
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] {
+  scroll-behavior: smooth;
+}
+
+[data-ui-mode="liquid"] ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+[data-ui-mode="liquid"] ::-webkit-scrollbar-track { background: transparent; }
+[data-ui-mode="liquid"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  backdrop-filter: blur(10px);
+}
+[data-ui-mode="liquid"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6);
+  background-clip: content-box;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Page transition — softer fade with subtle scale
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] .route-content {
+  animation: liquid-fade-in 0.4s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+@keyframes liquid-fade-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   💎 PACKAGE CARDS — premium liquid glass with brand-colored selection glow
+   These are the diamond/gem package picker buttons on the product detail page
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Targets <button aria-pressed> rounded cards in the package grid */
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.32) 100%) !important;
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.05) inset,
+    0 4px 14px -2px rgba(0, 0, 0, 0.08),
+    0 18px 42px -10px rgba(0, 0, 0, 0.16) !important;
+  overflow: visible !important;
+  /* Animate transform/box-shadow only — NOT backdrop-filter */
+  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+              box-shadow 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+              border-color 0.2s ease,
+              filter 0.2s ease !important;
+  contain: layout style;
+}
+
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"]:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.04) inset,
+    0 8px 22px -4px rgba(0, 0, 0, 0.12),
+    0 32px 64px -16px rgba(0, 0, 0, 0.22) !important;
+  filter: brightness(1.04);
+}
+
+/* Selected state — brand-colored gradient with glow ring */
+[data-ui-mode="liquid"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--brand) 18%, rgba(255, 255, 255, 0.75)) 0%,
+    color-mix(in oklab, var(--brand) 8%, rgba(255, 255, 255, 0.45)) 100%) !important;
+  border: 1.5px solid var(--brand) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 1px color-mix(in oklab, var(--brand) 12%, transparent) inset,
+    0 0 0 4px color-mix(in oklab, var(--brand) 22%, transparent),
+    0 8px 22px -4px color-mix(in oklab, var(--brand) 35%, rgba(0, 0, 0, 0.15)),
+    0 24px 48px -12px color-mix(in oklab, var(--brand) 25%, rgba(0, 0, 0, 0.2)) !important;
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Dark theme variants */
+[data-ui-mode="liquid"][data-theme="dark"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] {
+  background: linear-gradient(180deg,
+    rgba(40, 36, 80, 0.55) 0%,
+    rgba(20, 18, 40, 0.32) 100%) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.3) inset,
+    0 4px 14px -2px rgba(0, 0, 0, 0.4),
+    0 18px 42px -10px rgba(0, 0, 0, 0.55) !important;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] {
+  background: linear-gradient(180deg,
+    color-mix(in oklab, var(--brand) 30%, rgba(40, 36, 80, 0.7)) 0%,
+    color-mix(in oklab, var(--brand) 12%, rgba(20, 18, 40, 0.4)) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 0 0 4px color-mix(in oklab, var(--brand) 28%, transparent),
+    0 8px 22px -4px color-mix(in oklab, var(--brand) 45%, rgba(0, 0, 0, 0.3)),
+    0 24px 48px -12px color-mix(in oklab, var(--brand) 30%, rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* Glossy specular highlight overlay on selected card */
+[data-ui-mode="liquid"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"]::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 60%,
+    transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Make sure card content stays above the shine */
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Diamond cluster gets a subtle glow when card is selected */
+[data-ui-mode="liquid"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] svg {
+  filter: drop-shadow(0 4px 12px color-mix(in oklab, var(--brand) 50%, transparent))
+          drop-shadow(0 1px 3px rgba(255, 255, 255, 0.6));
+}
+
+/* Idle cards — subtle gem shadow */
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] svg {
+  filter: drop-shadow(0 2px 6px rgba(0, 30, 80, 0.18))
+          drop-shadow(0 1px 1px rgba(255, 255, 255, 0.5));
+  transition: filter 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* POPULAR / BEST tags — glassy floating pills */
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] > span[class*="absolute"][class*="-top-"][class*="rounded-full"] {
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 10px -2px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.4) !important;
+  letter-spacing: 0.04em;
+}
+
+/* Selection check mark — animated bounce */
+@keyframes liquid-check {
+  0%   { transform: scale(0) rotate(-45deg); opacity: 0; }
+  50%  { transform: scale(1.2) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+[data-ui-mode="liquid"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] > div[class*="absolute"][class*="rounded-full"] {
+  animation: liquid-check 0.45s cubic-bezier(0.34, 1.6, 0.64, 1) both;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 0 12px color-mix(in oklab, var(--brand) 60%, transparent),
+    0 2px 6px -1px color-mix(in oklab, var(--brand) 50%, rgba(0,0,0,0.2)) !important;
+}
+
+/* Smoothly animate the price + amount text on selection */
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] [class*="font-extrabold"],
+[data-ui-mode="liquid"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] b {
+  transition: color 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+[data-ui-mode="liquid"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] [class*="font-extrabold"] {
+  transform: scale(1.05);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🎮 HOME GRID GAME CARDS — floating liquid glass panels
+   These are the catalog cards on the home page (Mobile Legends, Spotify, etc.)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Distinct from package cards — game cards have overflow-hidden, no aria-pressed */
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]),
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]) {
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.32) 100%) !important;
+  backdrop-filter: blur(14px) saturate(170%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(170%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.04) inset,
+    0 6px 16px -4px rgba(0, 0, 0, 0.08),
+    0 24px 48px -12px rgba(0, 0, 0, 0.18) !important;
+  /* Only transition transform + shadow — NEVER backdrop-filter */
+  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+              box-shadow 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+              filter 0.2s ease,
+              border-color 0.2s ease !important;
+  contain: layout style;
+}
+
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):hover,
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]):hover {
+  transform: translateY(-6px) scale(1.025);
+  border-color: rgba(255, 255, 255, 0.85) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.05) inset,
+    0 16px 32px -6px rgba(0, 0, 0, 0.18),
+    0 48px 84px -16px rgba(0, 0, 0, 0.32) !important;
+  filter: brightness(1.05) saturate(1.1);
+}
+
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):active,
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]):active {
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 0.15s;
+}
+
+/* Dark theme variants */
+[data-ui-mode="liquid"][data-theme="dark"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]),
+[data-ui-mode="liquid"][data-theme="dark"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]) {
+  background: linear-gradient(180deg,
+    rgba(40, 36, 80, 0.55) 0%,
+    rgba(20, 18, 40, 0.32) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.3) inset,
+    0 6px 16px -4px rgba(0, 0, 0, 0.4),
+    0 24px 48px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+[data-ui-mode="liquid"][data-theme="dark"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):hover {
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 16px 32px -6px rgba(0, 0, 0, 0.5),
+    0 48px 84px -16px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🏷️ FLOATING GLASS BADGES — HOT, NEW, VIP, -25% etc.
+   Each colour variant gets a translucent gradient + matching glow
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Base glass treatment for badges/pills inside cards
+   ⚠️ DO NOT override `position` — Tailwind classes like `absolute top-2.5 right-2.5`
+       must keep working. We only style the badge's appearance. */
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"],
+[data-ui-mode="liquid"] span[class*="rounded-md"][class*="font-bold"]:not([class*="absolute"]),
+[data-ui-mode="liquid"] span[class*="rounded-full"][class*="font-bold"]:not([class*="absolute"]),
+[data-ui-mode="liquid"] span[class*="rounded"][class*="uppercase"][class*="font-bold"]:not([class*="absolute"]) {
+  backdrop-filter: blur(8px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 800 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  transition: filter 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.4, 0.64, 1) !important;
+}
+
+/* For NON-absolute badges (inline-flow, inside title rows), give them a
+   positioning context so the ::before shine can be contained */
+[data-ui-mode="liquid"] span[class*="rounded-md"][class*="font-bold"]:not([class*="absolute"]),
+[data-ui-mode="liquid"] span[class*="rounded-full"][class*="font-bold"]:not([class*="absolute"]),
+[data-ui-mode="liquid"] span[class*="rounded"][class*="uppercase"][class*="font-bold"]:not([class*="absolute"]) {
+  position: relative;
+}
+
+/* Absolute badges already create a positioning context for ::before */
+
+/* Inner top-edge shine — light hitting a glass pill */
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"]::before,
+[data-ui-mode="liquid"] span[class*="rounded-md"][class*="font-bold"]:not([class*="absolute"])::before,
+[data-ui-mode="liquid"] span[class*="rounded-full"][class*="font-bold"]:not([class*="absolute"])::before,
+[data-ui-mode="liquid"] span[class*="rounded"][class*="uppercase"][class*="font-bold"]:not([class*="absolute"])::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* ── Colour-specific translucent gradients (override the inline solid colour) ── */
+
+/* 🔥 HOT — orange (var(--accent) = #f59e0b) */
+[data-ui-mode="liquid"] span[style*="var(--accent)"] {
+  background: linear-gradient(135deg,
+    rgba(245, 158, 11, 0.92) 0%,
+    rgba(217, 119, 6, 0.6) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.15) inset,
+    0 4px 14px -2px rgba(245, 158, 11, 0.55),
+    0 8px 22px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 🆕 NEW — brand blue (var(--brand)) */
+[data-ui-mode="liquid"] span[style*="var(--brand)"]:not([style*="background:rgb"]):not([style*="rgba"]) {
+  background: linear-gradient(135deg,
+    color-mix(in oklab, var(--brand) 95%, transparent) 0%,
+    color-mix(in oklab, var(--brand) 60%, transparent) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.15) inset,
+    0 4px 14px -2px color-mix(in oklab, var(--brand) 55%, transparent),
+    0 8px 22px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 💸 Discount — green #16a34a */
+[data-ui-mode="liquid"] span[style*="#16a34a"] {
+  background: linear-gradient(135deg,
+    rgba(22, 163, 74, 0.92) 0%,
+    rgba(21, 128, 61, 0.58) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.15) inset,
+    0 4px 14px -2px rgba(22, 163, 74, 0.55),
+    0 8px 22px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ⭐ VIP — golden amber #fbbf24 */
+[data-ui-mode="liquid"] span[style*="#fbbf24"] {
+  background: linear-gradient(135deg,
+    rgba(251, 191, 36, 0.95) 0%,
+    rgba(245, 158, 11, 0.65) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 -1px 1px rgba(180, 83, 9, 0.18) inset,
+    0 4px 14px -2px rgba(251, 191, 36, 0.65),
+    0 8px 22px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 🌶 Danger / red badge */
+[data-ui-mode="liquid"] span[style*="var(--danger)"],
+[data-ui-mode="liquid"] span[style*="#dc2626"],
+[data-ui-mode="liquid"] span[style*="#ef4444"] {
+  background: linear-gradient(135deg,
+    rgba(220, 38, 38, 0.92) 0%,
+    rgba(185, 28, 28, 0.6) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 4px 14px -2px rgba(220, 38, 38, 0.55),
+    0 8px 22px -6px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 💎 KHQR red badge specifically */
+[data-ui-mode="liquid"] span[style*="#e11d48"] {
+  background: linear-gradient(135deg,
+    rgba(225, 29, 72, 0.95) 0%,
+    rgba(190, 18, 60, 0.65) 100%) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 4px 14px -2px rgba(225, 29, 72, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Hover sync with card — badges brighten + lift slightly */
+[data-ui-mode="liquid"] button[class*="overflow-hidden"]:hover span[class*="absolute"][class*="rounded"] {
+  filter: brightness(1.12) saturate(1.15);
+  transform: translateY(-1px);
+}
+
+/* The white text on glass badges — add a subtle outline for legibility */
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"][style*="color: rgb(255"],
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"][style*="color:#fff"],
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"][style*="color: #fff"] {
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.25),
+    0 0 1px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* All badge content stays above the ::before shine layer */
+[data-ui-mode="liquid"] span[class*="absolute"][class*="rounded"] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Card text area (title + subtitle below the gradient art) ─── */
+/* The .p-3 div inside game cards inherits the card's translucent bg.
+   Add a subtle vertical highlight to make it feel like glass below the art. */
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"] > div:not([class*="aspect"]):not([class*="absolute"]),
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"] > div:not([class*="aspect"]):not([class*="absolute"]) {
+  position: relative;
+}
+
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"] > div:not([class*="aspect"]):not([class*="absolute"])::before,
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"] > div:not([class*="aspect"]):not([class*="absolute"])::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 100%);
+  pointer-events: none;
+}
+
+/* ─── Game art (top portion with gradient + emblem) ─── */
+/* Inner glass cabinet effect — subtle reflection on the art's top edge */
+[data-ui-mode="liquid"] button[class*="rounded-2xl"][class*="overflow-hidden"] > div[class*="aspect"]::after,
+[data-ui-mode="liquid"] button[class*="rounded-xl"][class*="overflow-hidden"] > div[class*="aspect"]::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 35%;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ─── Section heading (Trending now / 12 items) ─── */
+[data-ui-mode="liquid"] section h3,
+[data-ui-mode="liquid"] section .section-head {
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* ─── Smooth grid stagger when home page mounts ─── */
+@keyframes liquid-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+[data-ui-mode="liquid"] [class*="grid"] > button[class*="rounded-2xl"][class*="overflow-hidden"],
+[data-ui-mode="liquid"] [class*="grid"] > button[class*="rounded-xl"][class*="overflow-hidden"] {
+  animation: liquid-card-in 0.5s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+/* Stagger nth-child for the trending cascade — caps at ~12 to prevent compound delay */
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(1)  { animation-delay: 0ms;  }
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(2)  { animation-delay: 40ms; }
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(3)  { animation-delay: 80ms; }
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(4)  { animation-delay: 120ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(5)  { animation-delay: 160ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(6)  { animation-delay: 200ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(7)  { animation-delay: 240ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(8)  { animation-delay: 280ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(9)  { animation-delay: 320ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(10) { animation-delay: 360ms;}
+[data-ui-mode="liquid"] [class*="grid"] > button:nth-child(n+11) { animation-delay: 400ms;}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ⚡ Performance hints — only on the actively hovered element
+   (will-change is expensive when applied broadly — it allocates GPU memory)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="liquid"] button[class*="rounded"]:hover {
+  will-change: transform;
+}
+
+/* Honour user's reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-mode="liquid"] *,
+  [data-ui-mode="liquid"] *::before,
+  [data-ui-mode="liquid"] *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  [data-ui-mode="liquid"] body {
+    animation: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🌸 ANIME / MANGA UI — kawaii motion design (per prompts/08-anime-animations.md)
+   Snap, don't bounce. Press, don't blur. Sparkle, don't strobe.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] {
+  /* ── Sakura Palette (per prompts/08-anime-animations (1).md) ─────────────── */
+  --bg:           #fff5f9;
+  --surface:      #ffffff;
+  --surface-2:    #fff0f6;
+  --line:         #ffd6e7;   /* default soft-pink borders */
+  --line-strong:  #ffb6d1;   /* hovered borders */
+  --ink:          #2a1a3a;   /* deep plum body text */
+  --ink-2:        #4a2d5c;
+  --muted:        #8a6a9a;
+  --muted-2:      #b094c0;
+  --brand:        #ff5e9c;   /* sakura pink */
+  --brand-soft:   #ffe0ee;
+  --brand-ink:    #ffffff;
+  --accent:       #6ec1ff;   /* sky cyan */
+  --success:      #5fd4a3;
+  --warn:         #ffb84d;
+  --danger:       #ff6b8a;
+
+  /* ── Motion tokens ──────────────────────────────────────────────────────── */
+  --ease-out:           cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out:        cubic-bezier(.4, 0, .2, 1);
+  --ease-bounce:        cubic-bezier(.34, 1.56, .64, 1);
+  --dur-fast:           150ms;
+  --dur-base:           220ms;
+  --dur-slow:           380ms;
+  --dur-loop:           4s;
+
+  /* ── Press shadows (Y-offset only, translucent pink) ────────────────────── */
+  --press-shadow:        0 4px 0 rgba(180, 60, 120, 0.35);
+  --press-shadow-hover:  0 5px 0 rgba(180, 60, 120, 0.40);
+  --press-shadow-active: 0 1px 0 rgba(180, 60, 120, 0.35);
+
+  /* Card shadow tokens — soft pink, not solid black */
+  --shadow-sm:    0 3px 0 rgba(180, 60, 120, 0.30);
+  --shadow-md:    0 4px 0 rgba(180, 60, 120, 0.35);
+  --shadow-lg:    0 6px 0 rgba(180, 60, 120, 0.40);
+}
+
+/* ── Static pastel background + dot pattern (no animation = no repaint) ──── */
+[data-ui-mode="anime"] body {
+  background:
+    radial-gradient(circle at 20px 20px, rgba(255, 94, 156, 0.10) 1.5px, transparent 1.5px),
+    linear-gradient(135deg, #fff5f9 0%, #ffe0ee 35%, #f3e7ff 70%, #e0f4ff 100%);
+  background-size: 40px 40px, 100% 100%;
+  background-attachment: fixed;
+  color: var(--ink);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ── Twinkling sparkle layer (decorative only, aria-hidden via pointer-events) ──
+   Multiple radial-gradients = single paint layer, very cheap. */
+[data-ui-mode="anime"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 12% 20%,  #fff      1px, transparent 2px),
+    radial-gradient(circle at 88% 35%,  #fff      1.5px, transparent 2.5px),
+    radial-gradient(circle at 22% 75%,  #ffd6e7   1.5px, transparent 2.5px),
+    radial-gradient(circle at 70% 85%,  #fff      1px, transparent 2px),
+    radial-gradient(circle at 45% 12%,  #ffd6e7   1.2px, transparent 2.2px),
+    radial-gradient(circle at 8% 55%,   #fff      1.2px, transparent 2.2px),
+    radial-gradient(circle at 92% 65%,  #c2eaff   1.4px, transparent 2.4px);
+  opacity: 0.5;
+}
+
+/* Page content stays above the sparkle layer.
+   :not([data-khqr-dialog]) preserves position:fixed on portaled dialogs. */
+[data-ui-mode="anime"] body > *:not([data-khqr-dialog]) { position: relative; z-index: 1; }
+
+/* ── Dark anime mode ────────────────────────────────────────────────────── */
+[data-ui-mode="anime"][data-theme="dark"] {
+  --bg:           #1a0e2e;
+  --surface:      #2a1f3d;
+  --surface-2:    #3a2d52;
+  --line:         #5a3a52;
+  --line-strong:  #ff5e9c;
+  --ink:          #ffe6f3;
+  --ink-2:        #d8c5e8;
+  --muted:        #c0a8d4;
+  --muted-2:      #8e7eaa;
+  --press-shadow:        0 4px 0 rgba(255, 94, 156, 0.35);
+  --press-shadow-hover:  0 5px 0 rgba(255, 94, 156, 0.45);
+  --press-shadow-active: 0 1px 0 rgba(255, 94, 156, 0.35);
+  --shadow-sm:    0 3px 0 rgba(255, 94, 156, 0.30);
+  --shadow-md:    0 4px 0 rgba(255, 94, 156, 0.35);
+  --shadow-lg:    0 6px 0 rgba(255, 94, 156, 0.40);
+}
+
+[data-ui-mode="anime"][data-theme="dark"] body {
+  background:
+    radial-gradient(circle at 20px 20px, rgba(255, 94, 156, 0.18) 1.5px, transparent 1.5px),
+    linear-gradient(135deg, #1a0e2e 0%, #2d1b47 50%, #3d1654 100%);
+  background-size: 40px 40px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   Universal smooth transitions — pop, don't bounce
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] *,
+[data-ui-mode="anime"] *::before,
+[data-ui-mode="anime"] *::after {
+  transition-property: transform, box-shadow, border-color, background-color, color, opacity;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   📦 CARDS — manga panel + lift-and-rotate hover (-0.4deg)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] aside,
+[data-ui-mode="anime"] [class*="rounded-2xl"]:not(button):not(span):not(input):not(img),
+[data-ui-mode="anime"] [class*="rounded-3xl"]:not(button):not(span):not(input):not(img),
+[data-ui-mode="anime"] [class*="rounded-[22px]"]:not(img),
+[data-ui-mode="anime"] [class*="rounded-[28px]"]:not(img) {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-md) !important;
+  background: var(--surface);
+  contain: layout style;
+  transition-duration: var(--dur-base);
+}
+
+[data-ui-mode="anime"] [class*="rounded-xl"]:not(button):not(span):not(input):not(label):not([role="switch"]):not(img) {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🔘 BUTTONS — chunky physical press-down (Y-offset only, no blur)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] button:not([disabled]) {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--press-shadow) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              filter var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out) !important;
+}
+
+[data-ui-mode="anime"] button:not([disabled]):hover {
+  transform: translateY(-1px);
+  box-shadow: var(--press-shadow-hover) !important;
+  filter: brightness(1.04);
+}
+
+[data-ui-mode="anime"] button:not([disabled]):active {
+  transform: translateY(2px);
+  box-shadow: var(--press-shadow-active) !important;
+  transition-duration: 80ms;
+}
+
+/* Brand-coloured CTAs — chunky sakura pink, white ink */
+[data-ui-mode="anime"] button[style*="var(--brand)"]:not([disabled]),
+[data-ui-mode="anime"] .cta {
+  background: linear-gradient(180deg, #ff85b4 0%, #ff5e9c 100%) !important;
+  color: var(--brand-ink) !important;
+  border-color: var(--brand) !important;
+  text-shadow: 0 1px 0 rgba(120, 30, 70, 0.20);
+}
+
+/* Brand CTA hover handled by global button:hover rule */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ✏️ INPUTS — focus ring grows in (180ms)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] input,
+[data-ui-mode="anime"] textarea,
+[data-ui-mode="anime"] select {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  font-weight: 500;
+  transition: border-color 180ms var(--ease-out),
+              box-shadow 180ms var(--ease-out) !important;
+}
+
+[data-ui-mode="anime"] input:focus,
+[data-ui-mode="anime"] textarea:focus,
+[data-ui-mode="anime"] select:focus {
+  outline: none;
+  border-color: var(--brand) !important;
+  box-shadow:
+    var(--shadow-sm),
+    0 0 0 4px var(--brand-soft) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🏷️ STICKER BADGES — slight rotation, brighten in sync with card hover
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] span[class*="absolute"][class*="rounded"],
+[data-ui-mode="anime"] [class*="rounded-full"]:not(button):not(input),
+[data-ui-mode="anime"] [class*="rounded-md"][class*="font-bold"]:not(button) {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-sm) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 0 rgba(120, 30, 70, 0.15);
+  transition: transform var(--dur-fast) var(--ease-out),
+              filter var(--dur-fast) var(--ease-out) !important;
+}
+
+[data-ui-mode="anime"] span[class*="absolute"][class*="top-"][class*="left-"][class*="rounded"] {
+  transform: rotate(-4deg);
+}
+[data-ui-mode="anime"] span[class*="absolute"][class*="top-"][class*="right-"][class*="rounded"] {
+  transform: rotate(4deg);
+}
+
+[data-ui-mode="anime"] button:hover span[class*="absolute"][class*="rounded"] {
+  transform: rotate(0deg) scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🎮 GAME GRID CARDS — lift + slight rotate on hover (per prompt)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]),
+[data-ui-mode="anime"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]) {
+  position: relative;
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-md) !important;
+  background: var(--surface);
+  transform-origin: 0% 100%;        /* pivot at left-bottom corner */
+  transition: transform var(--dur-base) var(--ease-bounce),
+              box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out) !important;
+}
+
+/* Desktop / mouse-pointer device — lean on hover */
+@media (hover: hover) {
+  [data-ui-mode="anime"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):hover,
+  [data-ui-mode="anime"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]):hover {
+    /* Pivot anchored at left-bottom; counter-clockwise rotate raises the
+       right-bottom corner above the left-bottom one (kawaii lean). */
+    transform: translate(2px, -6px) rotate(-2.4deg) scale(1.025);
+    box-shadow:
+      -4px 10px 0 rgba(255, 94, 156, 0.22),
+      0 18px 36px rgba(255, 94, 156, 0.28) !important;
+  }
+
+  [data-ui-mode="anime"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):active {
+    transform: translateY(2px);
+    box-shadow: var(--press-shadow-active) !important;
+    transition-duration: 80ms !important;
+  }
+}
+
+/* Touch device — lean on tap so mobile sees the same animation as desktop hover */
+@media (hover: none) {
+  [data-ui-mode="anime"] button[class*="rounded-2xl"][class*="overflow-hidden"]:not([aria-pressed]):active,
+  [data-ui-mode="anime"] button[class*="rounded-xl"][class*="overflow-hidden"]:not([aria-pressed]):active {
+    transform: translate(2px, -6px) rotate(-2.4deg) scale(1.025);
+    box-shadow:
+      -4px 10px 0 rgba(255, 94, 156, 0.22),
+      0 18px 36px rgba(255, 94, 156, 0.28) !important;
+    transition-duration: 220ms !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   💎 PACKAGE CARDS — selected gets rotating ✦ sparkle (per prompt §3)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"] {
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: var(--surface) !important;
+  overflow: visible !important;
+  transition: transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              background-color var(--dur-fast) var(--ease-out) !important;
+}
+
+[data-ui-mode="anime"] button[aria-pressed][class*="rounded-2xl"][class*="flex-col"]:hover {
+  transform: translateY(-3px) rotate(-0.3deg);
+  box-shadow:
+    0 6px 0 rgba(255, 94, 156, 0.18),
+    0 12px 24px rgba(255, 94, 156, 0.20) !important;
+}
+
+[data-ui-mode="anime"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"] {
+  background: linear-gradient(180deg, #fff5f9 0%, var(--brand-soft) 100%) !important;
+  border-color: var(--brand) !important;
+  box-shadow:
+    0 5px 0 rgba(255, 94, 156, 0.30),
+    0 10px 20px rgba(255, 94, 156, 0.20) !important;
+  transform: translateY(-1px);
+}
+
+/* The signature ✦ orbiting + popping in on selected package */
+@keyframes anime-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes anime-sparkle-pop {
+  0%   { transform: scale(0)   rotate(0deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(1)   rotate(360deg); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui-mode="anime"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"]::after {
+    content: "✦";
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    color: var(--brand);
+    font-size: 14px;
+    font-weight: 900;
+    pointer-events: none;
+    animation:
+      anime-sparkle-pop var(--dur-slow) var(--ease-bounce) both,
+      anime-spin var(--dur-loop) linear infinite var(--dur-slow);
+    text-shadow: 0 0 8px var(--brand-soft), 0 0 12px rgba(255, 94, 156, 0.45);
+    z-index: 2;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   📌 STICKY / FIXED — solid manga panel
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] .sticky,
+[data-ui-mode="anime"] [class*="fixed"][class*="bottom-0"],
+[data-ui-mode="anime"] nav.topnav,
+[data-ui-mode="anime"] .m-tab,
+[data-ui-mode="anime"] [style*="position: sticky"] {
+  background: var(--surface) !important;
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-md) !important;
+  contain: layout style;
+}
+
+[data-ui-mode="anime"] nav[class*="sticky"][class*="top-0"] {
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 2px solid var(--line) !important;
+  box-shadow: 0 4px 0 rgba(180, 60, 120, 0.20) !important;
+}
+
+/* Mobile sticky bottom bar — top-only border, shadow casts upward */
+[data-ui-mode="anime"] [class*="fixed"][class*="bottom-0"] {
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-top: 2px solid var(--line) !important;
+  box-shadow: 0 -4px 0 rgba(180, 60, 120, 0.18) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   💬 DIALOGS — slide up from bottom (220ms ease-out, with overshoot stop)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] [data-khqr-dialog="panel"],
+[data-ui-mode="anime"] [class*="rounded-t-[28px]"]:not([data-khqr-dialog]),
+[data-ui-mode="anime"] [class*="rounded-[28px]"]:not([data-khqr-dialog]) {
+  background: var(--surface);
+  border: 2px solid var(--line) !important;
+  box-shadow:
+    0 -6px 0 rgba(255, 94, 156, 0.18),
+    0 -16px 32px rgba(255, 94, 156, 0.20) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes anime-sheet-up {
+    from { transform: translateY(100%); }
+    60%  { transform: translateY(-6px); }    /* tiny overshoot */
+    to   { transform: translateY(0); }
+  }
+  [data-ui-mode="anime"] [data-khqr-dialog="panel"],
+  [data-ui-mode="anime"] [class*="rounded-t-[28px]"]:not([data-khqr-dialog]) {
+    animation: anime-sheet-up var(--dur-base) var(--ease-out) both;
+  }
+
+  @keyframes anime-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  [data-ui-mode="anime"] [data-khqr-dialog="backdrop"] {
+    animation: anime-fade-in var(--dur-base) var(--ease-out) both;
+  }
+}
+
+/* Dialog backdrop — soft sakura wash with halftone dots */
+[data-ui-mode="anime"] [data-khqr-dialog="backdrop"] {
+  background:
+    radial-gradient(circle at 15px 15px, rgba(120, 30, 70, 0.08) 1.5px, transparent 1.5px),
+    rgba(255, 94, 156, 0.30) !important;
+  background-size: 30px 30px, 100% 100%;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   📱 QR CODE — gentle scanning shimmer (per prompt §9)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes anime-scan {
+  0%   { transform: translateY(-30px); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(220px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Target the white-bg QR container — works in both KhqrPanel and KhqrDialog */
+  [data-ui-mode="anime"] [class*="bg-white"][class*="rounded-2xl"]:has(> svg),
+  [data-ui-mode="anime"] [class*="bg-white"][class*="rounded-3xl"]:has(svg) {
+    position: relative;
+    overflow: hidden;
+  }
+
+  [data-ui-mode="anime"] [class*="bg-white"][class*="rounded-2xl"]:has(> svg)::after,
+  [data-ui-mode="anime"] [class*="bg-white"][class*="rounded-3xl"]:has(svg)::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 30px;
+    background: linear-gradient(180deg,
+      transparent,
+      rgba(255, 94, 156, 0.42),
+      transparent);
+    animation: anime-scan 2s linear infinite;
+    pointer-events: none;
+    z-index: 5;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🌟 FLOATING GEMS — gentle bob for hero / banner decorations
+   Targets <span> with diamond emoji 💎 in the hero area
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes anime-float {
+  0%, 100% { transform: translateY(0)    rotate(8deg); }
+  50%      { transform: translateY(-10px) rotate(8deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui-mode="anime"] [class*="absolute"][style*="rotate"] {
+    animation: anime-float 4s ease-in-out infinite;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🌸 Headings — soft pink offset shadow on major titles only
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] section h2,
+[data-ui-mode="anime"] section h3,
+[data-ui-mode="anime"] section h1,
+[data-ui-mode="anime"] h1[class*="font-sora"] {
+  color: var(--ink);
+  text-shadow: 2px 2px 0 var(--brand-soft);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🌸 HOVER CATALOGUE — per element type (per prompt §3)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Category chips — small pill buttons that filter games. translateY-1 + bg tint */
+[data-ui-mode="anime"] button[class*="rounded-full"]:not([disabled]):hover,
+[data-ui-mode="anime"] button[class*="rounded-md"]:not([disabled]):not([class*="overflow-hidden"]):hover {
+  transform: translateY(-1px);
+  background-color: var(--brand-soft) !important;
+}
+
+/* Square icon buttons (back, share, close) — bg fill + scale 1.05 */
+[data-ui-mode="anime"] button[class*="rounded-xl"][class*="grid"][class*="place-items-center"]:not([disabled]):hover,
+[data-ui-mode="anime"] button[aria-label]:not([disabled]):not([class*="rounded-2xl"]):not([class*="rounded-full"]):hover {
+  transform: scale(1.05);
+  background-color: var(--brand-soft) !important;
+}
+
+/* Bank rows / list items — bg tint only */
+[data-ui-mode="anime"] [class*="flex"][class*="rounded-xl"]:not(button):hover,
+[data-ui-mode="anime"] [role="button"][class*="rounded-xl"]:hover,
+[data-ui-mode="anime"] li[class*="rounded-xl"]:hover,
+[data-ui-mode="anime"] a[class*="rounded-xl"][class*="flex"]:hover {
+  background-color: var(--brand-soft) !important;
+}
+
+/* Top-nav links — bg pill + brand color */
+[data-ui-mode="anime"] nav a:not([class*="rounded-2xl"]):not([class*="rounded-full"]):hover {
+  color: var(--brand) !important;
+  background-color: var(--brand-soft) !important;
+  border-radius: 8px;
+}
+
+/* Avatar / user chip — scale + brand-soft ring */
+[data-ui-mode="anime"] [class*="rounded-full"][class*="overflow-hidden"]:hover,
+[data-ui-mode="anime"] img[class*="rounded-full"]:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 0 3px var(--brand-soft) !important;
+}
+
+/* Plain text links — underline grow */
+[data-ui-mode="anime"] a:not([class*="rounded"]):not([class*="flex"]) {
+  text-decoration-color: transparent;
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+[data-ui-mode="anime"] a:not([class*="rounded"]):not([class*="flex"]):hover {
+  color: var(--brand);
+  text-decoration-color: var(--brand);
+}
+
+/* Standalone sparkle/decoration spans (✦, ✨, 🌸 etc.) — rotate + brighten */
+[data-ui-mode="anime"] *:hover > span[aria-hidden="true"]:not([class*="absolute"]),
+[data-ui-mode="anime"] button:hover > span:first-child:not([class*="absolute"]):not([class*="rounded"]) {
+  transform: rotate(15deg);
+  filter: brightness(1.10);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🌸 HERO BANNER — sakura gradient, replaces dark navy from prototype
+   The component has hardcoded inline gradients so we override with !important.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"][style*="grid"] {
+  background:
+    radial-gradient(800px 320px at 0% 0%, rgba(255, 94, 156, 0.45), transparent 60%),
+    radial-gradient(700px 360px at 100% 100%, rgba(110, 193, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, #ffc1d8 0%, #d6b8ff 50%, #b8d8ff 100%) !important;
+  color: var(--ink) !important;
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Hero — Limited badge pill */
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] > div > span[class*="rounded-full"][class*="uppercase"] {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 2px solid var(--brand) !important;
+  color: var(--brand) !important;
+}
+
+/* Hero — heading */
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] h2[class*="font-sora"] {
+  color: var(--ink) !important;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Hero — subtitle paragraph */
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] > div > p {
+  color: var(--ink-2) !important;
+}
+
+/* Hero — stat tiles (180+, ~9s, 4.9★) */
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] [class*="rounded-xl"][class*="min-w-"] {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 2px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 3px 0 rgba(180, 60, 120, 0.18) !important;
+}
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] [class*="rounded-xl"][class*="min-w-"] b {
+  color: var(--ink) !important;
+}
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] [class*="rounded-xl"][class*="min-w-"] span {
+  color: var(--muted) !important;
+}
+
+/* Hero — floating diamond squares (translucent glassy white-pink) */
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] div[class*="absolute"][class*="rounded-2xl"] {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 224, 238, 0.35)) !important;
+  border: 2px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 12px 24px rgba(255, 94, 156, 0.20) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+[data-ui-mode="anime"] section > div[class*="rounded-[22px]"] div[class*="absolute"][class*="rounded-2xl"] span {
+  color: var(--brand) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🪪 PRODUCT-DETAIL BANNER — opaque kawaii frame for the logo thumbnail
+   The thumbnail has rgba(255,255,255,.12) baked in the markup, made for dark
+   banners. On the light sakura banner it's nearly invisible — re-frame it.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] div[class*="rounded-[20px]"][class*="overflow-hidden"] {
+  background: var(--surface) !important;
+  border: 2px solid var(--brand) !important;
+  box-shadow: 0 0 0 4px rgba(255, 224, 238, 0.55) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+[data-ui-mode="anime"] div[class*="rounded-[20px]"][class*="overflow-hidden"] > img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   🎯 CATEGORY CHIPS — pink default, success-green active (per reference)
+   The component sets background/color/borderColor inline via JS so override.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] button[aria-pressed][class*="rounded-full"] {
+  background: var(--surface) !important;
+  color: var(--ink-2) !important;
+  border: 2px solid var(--line) !important;
+  box-shadow: var(--shadow-sm) !important;
+  font-weight: 700 !important;
+}
+
+[data-ui-mode="anime"] button[aria-pressed="false"][class*="rounded-full"]:hover {
+  transform: translateY(-1px);
+  background-color: var(--brand-soft) !important;
+  color: var(--brand) !important;
+  box-shadow: var(--press-shadow-hover) !important;
+}
+
+/* Active chip — sakura brand pink */
+[data-ui-mode="anime"] button[aria-pressed="true"][class*="rounded-full"] {
+  background: var(--brand) !important;
+  color: var(--brand-ink) !important;
+  border-color: var(--brand) !important;
+  box-shadow: 0 4px 0 rgba(255, 94, 156, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+[data-ui-mode="anime"] button[aria-pressed="true"][class*="rounded-full"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 rgba(255, 94, 156, 0.40) !important;
+  filter: brightness(1.05);
+}
+
+[data-ui-mode="anime"] [class*="text-white"][class*="font-sora"][class*="font-bold"] {
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   📜 PAGE / GRID ENTRANCE — fade + lift (per prompt §6, §7)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes anime-route-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes anime-card-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui-mode="anime"] .route-content {
+    animation: anime-route-in 250ms var(--ease-out) both;
+  }
+
+  [data-ui-mode="anime"] [class*="grid"] > button[class*="rounded-2xl"][class*="overflow-hidden"],
+  [data-ui-mode="anime"] [class*="grid"] > button[class*="rounded-xl"][class*="overflow-hidden"] {
+    animation: anime-card-in 300ms var(--ease-out) both;
+  }
+
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(1)  { animation-delay: 0ms;  }
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(2)  { animation-delay: 50ms; }
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(3)  { animation-delay: 100ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(4)  { animation-delay: 150ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(5)  { animation-delay: 200ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(6)  { animation-delay: 250ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(7)  { animation-delay: 300ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(8)  { animation-delay: 350ms;}
+  [data-ui-mode="anime"] [class*="grid"] > button:nth-child(n+9) { animation-delay: 400ms;}
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ✨ SKELETON SHIMMER — pink sweep instead of gray (per prompt micro-int.)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes anime-skeleton {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-ui-mode="anime"] [class*="animate-pulse"] {
+    animation: none !important;
+    background: linear-gradient(90deg,
+      var(--brand-soft) 0%,
+      #fff 30%,
+      var(--brand-soft) 60%,
+      #fff 100%) !important;
+    background-size: 200% 100%;
+    animation: anime-skeleton 1.4s var(--ease-in-out) infinite !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ⚡ Performance hints — only on actively interacted element
+   ════════════════════════════════════════════════════════════════════════════ */
+
+[data-ui-mode="anime"] button:hover { will-change: transform; }
+[data-ui-mode="anime"] button:active { will-change: transform; }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ♿ REDUCED MOTION — keep colour transitions, kill all loops + transforms
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-mode="anime"] *,
+  [data-ui-mode="anime"] *::before,
+  [data-ui-mode="anime"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 80ms !important;
+  }
+  /* Preserve colour transitions but kill loops + transforms entirely */
+  [data-ui-mode="anime"] body::before { animation: none !important; }
+  [data-ui-mode="anime"] button:hover,
+  [data-ui-mode="anime"] [class*="overflow-hidden"]:hover,
+  [data-ui-mode="anime"] button[aria-pressed]:hover {
+    transform: none !important;
+  }
+  [data-ui-mode="anime"] button[aria-pressed="true"][class*="rounded-2xl"][class*="flex-col"]::after {
+    animation: none !important;
+  }
+}
