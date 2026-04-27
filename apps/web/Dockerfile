@@ -30,4 +30,5 @@ COPY --from=build /app/apps/web/public ./apps/web/public
 
 USER appuser
 EXPOSE 3000
+ENV HOSTNAME=0.0.0.0
 CMD ["node", "apps/web/server.js"]
