@@ -3,7 +3,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 FROM base AS deps
-COPY package.json pnpm-workspace.yaml ./
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/shared/package.json packages/shared/
 COPY apps/api/package.json apps/api/
 RUN pnpm install --frozen-lockfile
@@ -34,4 +34,6 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 EXPOSE 4000
-CMD ["node", "apps/api/dist/main.js"]
+
+# Run migrations then start the server
+CMD ["sh", "-c", "cd apps/api && npx prisma migrate deploy && cd /app && node apps/api/dist/main.js"]

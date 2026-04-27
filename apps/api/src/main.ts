@@ -29,11 +29,12 @@ async function bootstrap() {
 
   app.useGlobalFilters(new ProblemFilter());
 
-  // Allow both localhost (browser on this PC) and the LAN IP (phone/tablet)
+  // Allow localhost dev, LAN, and any deployed frontend (set EXTRA_ORIGINS as comma-separated list)
   const allowedOrigins = [
     process.env.WEB_ORIGIN ?? 'http://localhost:3000',
     'http://localhost:3000',
     'http://192.168.1.4:3000',
+    ...(process.env.EXTRA_ORIGINS ? process.env.EXTRA_ORIGINS.split(',') : []),
   ];
   app.enableCors({
     origin: (origin, cb) => {

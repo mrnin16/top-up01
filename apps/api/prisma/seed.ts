@@ -27,20 +27,102 @@ const PRODUCTS = [
 ];
 
 // priceCents = priceUSD * 100
-const MLBB_PACKAGES = [
-  { amount: 11,    bonus: 0,   priceCents: 30,    popular: false, best: false, sortOrder: 1  },
-  { amount: 22,    bonus: 0,   priceCents: 60,    popular: false, best: false, sortOrder: 2  },
-  { amount: 56,    bonus: 0,   priceCents: 150,   popular: false, best: false, sortOrder: 3  },
-  { amount: 112,   bonus: 0,   priceCents: 299,   popular: true,  best: false, sortOrder: 4  },
-  { amount: 172,   bonus: 8,   priceCents: 459,   popular: false, best: false, sortOrder: 5  },
-  { amount: 257,   bonus: 0,   priceCents: 649,   popular: false, best: false, sortOrder: 6  },
-  { amount: 343,   bonus: 14,  priceCents: 899,   popular: false, best: false, sortOrder: 7  },
-  { amount: 568,   bonus: 28,  priceCents: 1499,  popular: false, best: true,  sortOrder: 8  },
-  { amount: 1167,  bonus: 60,  priceCents: 2999,  popular: false, best: false, sortOrder: 9  },
-  { amount: 2398,  bonus: 120, priceCents: 5999,  popular: false, best: false, sortOrder: 10 },
-  { amount: 6160,  bonus: 320, priceCents: 14999, popular: false, best: false, sortOrder: 11 },
-  { amount: 12330, bonus: 720, priceCents: 29999, popular: false, best: false, sortOrder: 12 },
-];
+const PACKAGES: Record<string, { amount: number; bonus: number; priceCents: number; popular: boolean; best: boolean; sortOrder: number }[]> = {
+  mlbb: [
+    { amount: 11,    bonus: 0,   priceCents: 30,    popular: false, best: false, sortOrder: 1  },
+    { amount: 22,    bonus: 0,   priceCents: 60,    popular: false, best: false, sortOrder: 2  },
+    { amount: 56,    bonus: 0,   priceCents: 150,   popular: false, best: false, sortOrder: 3  },
+    { amount: 112,   bonus: 0,   priceCents: 299,   popular: true,  best: false, sortOrder: 4  },
+    { amount: 172,   bonus: 8,   priceCents: 459,   popular: false, best: false, sortOrder: 5  },
+    { amount: 257,   bonus: 0,   priceCents: 649,   popular: false, best: false, sortOrder: 6  },
+    { amount: 343,   bonus: 14,  priceCents: 899,   popular: false, best: false, sortOrder: 7  },
+    { amount: 568,   bonus: 28,  priceCents: 1499,  popular: false, best: true,  sortOrder: 8  },
+    { amount: 1167,  bonus: 60,  priceCents: 2999,  popular: false, best: false, sortOrder: 9  },
+    { amount: 2398,  bonus: 120, priceCents: 5999,  popular: false, best: false, sortOrder: 10 },
+    { amount: 6160,  bonus: 320, priceCents: 14999, popular: false, best: false, sortOrder: 11 },
+    { amount: 12330, bonus: 720, priceCents: 29999, popular: false, best: false, sortOrder: 12 },
+  ],
+  ff: [
+    { amount: 50,   bonus: 0,   priceCents: 100,  popular: false, best: false, sortOrder: 1 },
+    { amount: 100,  bonus: 0,   priceCents: 200,  popular: false, best: false, sortOrder: 2 },
+    { amount: 210,  bonus: 0,   priceCents: 400,  popular: true,  best: false, sortOrder: 3 },
+    { amount: 530,  bonus: 0,   priceCents: 999,  popular: false, best: false, sortOrder: 4 },
+    { amount: 1060, bonus: 0,   priceCents: 1999, popular: false, best: true,  sortOrder: 5 },
+    { amount: 2180, bonus: 0,   priceCents: 3999, popular: false, best: false, sortOrder: 6 },
+    { amount: 5600, bonus: 0,   priceCents: 9999, popular: false, best: false, sortOrder: 7 },
+  ],
+  pubg: [
+    { amount: 60,   bonus: 0,  priceCents: 99,   popular: false, best: false, sortOrder: 1 },
+    { amount: 300,  bonus: 25, priceCents: 499,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 600,  bonus: 60, priceCents: 999,  popular: false, best: false, sortOrder: 3 },
+    { amount: 1500, bonus: 300,priceCents: 2499, popular: false, best: true,  sortOrder: 4 },
+    { amount: 3000, bonus: 700,priceCents: 4999, popular: false, best: false, sortOrder: 5 },
+    { amount: 6000, bonus: 1500,priceCents:9999, popular: false, best: false, sortOrder: 6 },
+  ],
+  genshin: [
+    { amount: 60,   bonus: 0,   priceCents: 99,   popular: false, best: false, sortOrder: 1 },
+    { amount: 300,  bonus: 30,  priceCents: 499,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 980,  bonus: 110, priceCents: 1499, popular: false, best: false, sortOrder: 3 },
+    { amount: 1980, bonus: 260, priceCents: 2999, popular: false, best: true,  sortOrder: 4 },
+    { amount: 3280, bonus: 600, priceCents: 4999, popular: false, best: false, sortOrder: 5 },
+    { amount: 6480, bonus: 1600,priceCents: 9999, popular: false, best: false, sortOrder: 6 },
+  ],
+  valorant: [
+    { amount: 475,  bonus: 0, priceCents: 499,  popular: false, best: false, sortOrder: 1 },
+    { amount: 1000, bonus: 0, priceCents: 999,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 2050, bonus: 0, priceCents: 1999, popular: false, best: true,  sortOrder: 3 },
+    { amount: 3650, bonus: 0, priceCents: 3499, popular: false, best: false, sortOrder: 4 },
+    { amount: 5350, bonus: 0, priceCents: 4999, popular: false, best: false, sortOrder: 5 },
+  ],
+  honkai: [
+    { amount: 60,   bonus: 0,   priceCents: 99,   popular: false, best: false, sortOrder: 1 },
+    { amount: 300,  bonus: 30,  priceCents: 499,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 980,  bonus: 110, priceCents: 1499, popular: false, best: false, sortOrder: 3 },
+    { amount: 1980, bonus: 260, priceCents: 2999, popular: false, best: true,  sortOrder: 4 },
+    { amount: 3280, bonus: 600, priceCents: 4999, popular: false, best: false, sortOrder: 5 },
+    { amount: 6480, bonus: 1600,priceCents: 9999, popular: false, best: false, sortOrder: 6 },
+  ],
+  spotify: [
+    { amount: 1,  bonus: 0, priceCents: 199,  popular: false, best: false, sortOrder: 1 },
+    { amount: 3,  bonus: 0, priceCents: 549,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 6,  bonus: 0, priceCents: 999,  popular: false, best: false, sortOrder: 3 },
+    { amount: 12, bonus: 0, priceCents: 1799, popular: false, best: true,  sortOrder: 4 },
+  ],
+  netflix: [
+    { amount: 1,  bonus: 0, priceCents: 399,  popular: false, best: false, sortOrder: 1 },
+    { amount: 3,  bonus: 0, priceCents: 1099, popular: true,  best: false, sortOrder: 2 },
+    { amount: 6,  bonus: 0, priceCents: 1999, popular: false, best: false, sortOrder: 3 },
+    { amount: 12, bonus: 0, priceCents: 3599, popular: false, best: true,  sortOrder: 4 },
+  ],
+  smart: [
+    { amount: 3,   bonus: 0, priceCents: 199,  popular: false, best: false, sortOrder: 1 },
+    { amount: 10,  bonus: 0, priceCents: 599,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 25,  bonus: 0, priceCents: 1299, popular: false, best: false, sortOrder: 3 },
+    { amount: 50,  bonus: 0, priceCents: 2499, popular: false, best: true,  sortOrder: 4 },
+    { amount: 100, bonus: 0, priceCents: 4499, popular: false, best: false, sortOrder: 5 },
+  ],
+  metfone: [
+    { amount: 100,  bonus: 0, priceCents: 100,  popular: false, best: false, sortOrder: 1 },
+    { amount: 500,  bonus: 0, priceCents: 500,  popular: true,  best: false, sortOrder: 2 },
+    { amount: 1000, bonus: 0, priceCents: 1000, popular: false, best: false, sortOrder: 3 },
+    { amount: 2000, bonus: 0, priceCents: 2000, popular: false, best: true,  sortOrder: 4 },
+    { amount: 5000, bonus: 0, priceCents: 5000, popular: false, best: false, sortOrder: 5 },
+  ],
+  google: [
+    { amount: 5,   bonus: 0, priceCents: 500,  popular: false, best: false, sortOrder: 1 },
+    { amount: 10,  bonus: 0, priceCents: 1000, popular: true,  best: false, sortOrder: 2 },
+    { amount: 25,  bonus: 0, priceCents: 2500, popular: false, best: false, sortOrder: 3 },
+    { amount: 50,  bonus: 0, priceCents: 5000, popular: false, best: true,  sortOrder: 4 },
+    { amount: 100, bonus: 0, priceCents: 9999, popular: false, best: false, sortOrder: 5 },
+  ],
+  apple: [
+    { amount: 5,   bonus: 0, priceCents: 500,  popular: false, best: false, sortOrder: 1 },
+    { amount: 10,  bonus: 0, priceCents: 1000, popular: true,  best: false, sortOrder: 2 },
+    { amount: 25,  bonus: 0, priceCents: 2500, popular: false, best: false, sortOrder: 3 },
+    { amount: 50,  bonus: 0, priceCents: 5000, popular: false, best: true,  sortOrder: 4 },
+    { amount: 100, bonus: 0, priceCents: 9999, popular: false, best: false, sortOrder: 5 },
+  ],
+};
 
 async function main() {
   console.log('Seeding…');
@@ -49,40 +131,40 @@ async function main() {
   const catMap: Record<string, string> = {};
   for (const c of CATEGORIES) {
     const cat = await prisma.category.upsert({
-      where: { slug: c.slug },
-      update: {},
+      where:  { slug: c.slug },
+      update: { label: c.label, icon: c.icon, sortOrder: c.sortOrder },
       create: { slug: c.slug, label: c.label, icon: c.icon, sortOrder: c.sortOrder },
     });
     catMap[c.slug] = cat.id;
   }
+  console.log(`  ✓ ${CATEGORIES.length} categories`);
 
   // Products + packages
   for (const p of PRODUCTS) {
     const product = await prisma.product.upsert({
-      where: { slug: p.slug },
-      update: {},
+      where:  { slug: p.slug },
+      update: {
+        title: p.title, sub: p.sub, categoryId: catMap[p.cat],
+        currencyLabel: p.currency, supportsDirect: p.supportsDirect,
+        supportsCode: p.supportsCode, gradFrom: p.gradFrom, gradTo: p.gradTo,
+        emblem: p.emblem, hot: p.hot, isNew: p.isNew,
+      },
       create: {
-        slug: p.slug,
-        title: p.title,
-        sub: p.sub,
-        categoryId: catMap[p.cat],
-        currencyLabel: p.currency,
-        supportsDirect: p.supportsDirect,
-        supportsCode: p.supportsCode,
-        gradFrom: p.gradFrom,
-        gradTo: p.gradTo,
-        emblem: p.emblem,
-        hot: p.hot,
-        isNew: p.isNew,
+        slug: p.slug, title: p.title, sub: p.sub, categoryId: catMap[p.cat],
+        currencyLabel: p.currency, supportsDirect: p.supportsDirect,
+        supportsCode: p.supportsCode, gradFrom: p.gradFrom, gradTo: p.gradTo,
+        emblem: p.emblem, hot: p.hot, isNew: p.isNew,
       },
     });
 
-    // Delete existing packages to allow re-seed
+    const pkgs = PACKAGES[p.slug] ?? [];
     await prisma.package.deleteMany({ where: { productId: product.id } });
-
-    await prisma.package.createMany({
-      data: MLBB_PACKAGES.map(pkg => ({ ...pkg, productId: product.id })),
-    });
+    if (pkgs.length > 0) {
+      await prisma.package.createMany({
+        data: pkgs.map(pkg => ({ ...pkg, productId: product.id })),
+      });
+    }
+    console.log(`  ✓ ${p.title} (${pkgs.length} packages)`);
   }
 
   // Demo users
@@ -90,16 +172,16 @@ async function main() {
   const adminHash = await argon2.hash('admin123');
 
   await prisma.user.upsert({
-    where: { email: 'lina@example.com' },
+    where:  { email: 'lina@example.com' },
     update: {},
     create: { email: 'lina@example.com', name: 'Lina Sok', passwordHash: linaHash, role: 'USER' },
   });
-
   await prisma.user.upsert({
-    where: { email: 'admin@topup.local' },
+    where:  { email: 'admin@topup.local' },
     update: {},
     create: { email: 'admin@topup.local', name: 'Admin', passwordHash: adminHash, role: 'ADMIN' },
   });
+  console.log('  ✓ demo users (lina@example.com / password123, admin@topup.local / admin123)');
 
   console.log('Seed complete.');
 }
