@@ -57,6 +57,7 @@ model Product {
   vip             Boolean   @default(false)     // VIP badge
   discountPercent Int       @default(0)         // 0-100 % off all packages
   active          Boolean   @default(true)
+  sortOrder       Int       @default(0)         // admin-controlled display order
   packages        Package[]
   orders          Order[]
 }
