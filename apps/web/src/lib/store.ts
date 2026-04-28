@@ -19,8 +19,9 @@ interface AuthState {
 }
 
 interface ThemeState {
-  brandColor: string;
-  dark: boolean;
+  brandColor:           string;
+  brandColorCustomized: boolean;
+  dark:                 boolean;
 }
 
 interface AppState extends CheckoutDraft, AuthState, ThemeState {
@@ -30,7 +31,7 @@ interface AppState extends CheckoutDraft, AuthState, ThemeState {
   setAccessToken:(access: string) => void;     // for refresh-only updates
   setUser:       (user: AuthUser) => void;
   clearAuth:     () => void;
-  setBrand:      (color: string) => void;
+  setBrand:      (color: string, markCustomized?: boolean) => void;
   setDark:       (dark: boolean) => void;
   // Guest order tracking — orderIds placed without being signed in,
   // stored locally so the success/checkout pages remain accessible after
@@ -74,10 +75,12 @@ export const useStore = create<AppState>()(
         set({ accessToken: null, refreshToken: null, user: null });
       },
 
-      brandColor: '#2563eb',
-      dark:       false,
-      setBrand:   (brandColor) => set({ brandColor }),
-      setDark:    (dark)        => set({ dark }),
+      brandColor:           '#2563eb',
+      brandColorCustomized: false,
+      dark:                 false,
+      setBrand: (brandColor, markCustomized = true) =>
+        set({ brandColor, ...(markCustomized ? { brandColorCustomized: true } : {}) }),
+      setDark: (dark) => set({ dark }),
 
       guestOrderIds: [],
       pushGuestOrder: (orderId) =>
@@ -90,8 +93,9 @@ export const useStore = create<AppState>()(
     {
       name: 'topup-store',
       partialize: (s) => ({
-        brandColor:    s.brandColor,
-        dark:          s.dark,
+        brandColor:           s.brandColor,
+        brandColorCustomized: s.brandColorCustomized,
+        dark:                 s.dark,
         accessToken:   s.accessToken,
         refreshToken:  s.refreshToken,
         user:          s.user,
@@ -99,6 +103,10 @@ export const useStore = create<AppState>()(
       }),
       onRehydrateStorage: () => (state) => {
         if (state?.accessToken && state?.user) syncSessionCookie(true);
+        // Migration: existing users with a non-default color are implicitly customized
+        if (state && state.brandColor && state.brandColor !== '#2563eb') {
+          state.brandColorCustomized = true;
+        }
       },
     },
   ),

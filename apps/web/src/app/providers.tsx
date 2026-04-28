@@ -8,8 +8,10 @@ import { api, setAccessToken, setRefreshToken, onAuthFailure } from '@/lib/api';
 function ThemeBootstrap() {
   const router       = useRouter();
   const pathname     = usePathname();
-  const brandColor   = useStore(s => s.brandColor);
-  const dark         = useStore(s => s.dark);
+  const brandColor            = useStore(s => s.brandColor);
+  const brandColorCustomized  = useStore(s => s.brandColorCustomized);
+  const setBrand              = useStore(s => s.setBrand);
+  const dark                  = useStore(s => s.dark);
   const accessToken  = useStore(s => s.accessToken);
   const refreshToken = useStore(s => s.refreshToken);
   const clearAuth    = useStore(s => s.clearAuth);
@@ -20,7 +22,8 @@ function ThemeBootstrap() {
     queryFn:   api.publicSettings,
     staleTime: 60_000,
   });
-  const uiMode = platform?.uiMode ?? 'default';
+  const uiMode            = platform?.uiMode ?? 'default';
+  const defaultBrandColor = platform?.defaultBrandColor;
 
   // Sync persisted tokens
   useEffect(() => {
@@ -50,6 +53,13 @@ function ThemeBootstrap() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   }, [dark]);
+
+  // Apply admin's default brand color for users who haven't customized theirs
+  useEffect(() => {
+    if (defaultBrandColor && !brandColorCustomized) {
+      setBrand(defaultBrandColor, false); // false = don't mark as user-customized
+    }
+  }, [defaultBrandColor, brandColorCustomized, setBrand]);
 
   // Liquid Glass UI mode — applied platform-wide via attribute on <html>
   useEffect(() => {

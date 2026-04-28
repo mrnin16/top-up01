@@ -174,6 +174,18 @@ export default function AdminProductsPage() {
                   </p>
 
                   <div className="flex flex-wrap gap-4 items-center">
+                    {/* Sort order */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-[12px] font-medium" style={{ color: 'var(--ink-2)' }}>Order</span>
+                      <input type="number" min={0} step={1}
+                        className="w-16 h-8 px-2 rounded-lg border text-center text-[13px] outline-none font-mono"
+                        style={{ background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--ink)' }}
+                        value={get(p, 'sortOrder') ?? 0}
+                        onChange={e => change(p.id, 'sortOrder', parseInt(e.target.value) || 0)}
+                        title="Lower number = appears first in catalog"
+                      />
+                    </div>
+
                     {/* Discount slider */}
                     <div className="flex items-center gap-2">
                       <span className="text-[12px] font-medium" style={{ color: 'var(--ink-2)' }}>Discount</span>

@@ -279,6 +279,28 @@ export default function AdminSettingsPage() {
             ✨ Selected: <b>{field('uiMode') === 'liquid' ? 'Liquid Glass' : 'Anime / Manga'}</b> — click <b>"Save all settings"</b> below to apply for all users.
           </div>
         )}
+
+        {/* Default brand color */}
+        <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: '1px dashed var(--line)' }}>
+          <div>
+            <b className="text-[14px] font-semibold block">Default brand color</b>
+            <span className="text-[12px]" style={{ color: 'var(--muted)' }}>
+              Applied to all visitors who haven&apos;t customized their color
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={field('defaultBrandColor') || '#2563eb'}
+              onChange={e => set('defaultBrandColor', e.target.value)}
+              className="w-10 h-10 rounded-lg border cursor-pointer"
+              style={{ borderColor: 'var(--line)', padding: 2 }}
+            />
+            <span className="font-mono text-[12px]" style={{ color: 'var(--muted)' }}>
+              {field('defaultBrandColor') || '#2563eb'}
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* ── Store ──────────────────────────────────────────────────────────── */}
@@ -327,42 +349,48 @@ export default function AdminSettingsPage() {
         <span className="text-lg" style={{ color: 'var(--muted)' }}>→</span>
       </Link>
 
-      {/* ── Save button + status ───────────────────────────────────────────── */}
-      {saveMsg && (
-        <div className="mb-3 p-3 rounded-xl text-[13px] font-medium"
-          style={{
-            background: saveMsg.startsWith('✅')
-              ? 'color-mix(in oklab, var(--success) 10%, var(--surface))'
-              : 'color-mix(in oklab, var(--danger) 10%, var(--surface))',
-            border: `1px solid ${saveMsg.startsWith('✅')
-              ? 'color-mix(in oklab, var(--success) 30%, var(--line))'
-              : 'color-mix(in oklab, var(--danger) 30%, var(--line))'}`,
-            color: saveMsg.startsWith('✅') ? 'var(--success)' : 'var(--danger)',
-          }}>
-          {saveMsg}
-        </div>
-      )}
-
-      {uploadStatus === 'uploading' && (
-        <div className="mb-3 p-3 rounded-xl text-[12.5px]"
-          style={{ background: 'color-mix(in oklab, var(--brand) 8%, var(--surface))', border: '1px solid color-mix(in oklab, var(--brand) 25%, var(--line))', color: 'var(--brand)' }}>
-          ⏳ Image is uploading… please wait before saving.
-        </div>
-      )}
-
-      <button
-        onClick={() => saveMut.mutate()}
-        disabled={isBusy}
-        className={`w-full h-12 rounded-xl font-semibold text-[14px] transition-all${isBusy?' btn-busy':''}`}
+      {/* ── Sticky save bar ────────────────────────────────────────────────── */}
+      <div className="sticky bottom-0 py-4 -mx-6 md:-mx-8 px-6 md:px-8"
         style={{
-          background: 'var(--brand)',
-          color:      '#fff',
-          boxShadow:  isBusy ? 'none' : '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)',
+          background:           'color-mix(in oklab, var(--surface) 92%, transparent)',
+          borderTop:            '1px solid var(--line)',
+          backdropFilter:       'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}>
-        {saveMut.isPending ? 'Saving…'
-         : uploadStatus === 'uploading' ? 'Wait for upload…'
-         : '💾 Save all settings'}
-      </button>
+        {saveMsg && (
+          <div className="mb-3 p-3 rounded-xl text-[13px] font-medium"
+            style={{
+              background: saveMsg.startsWith('✅')
+                ? 'color-mix(in oklab, var(--success) 10%, var(--surface))'
+                : 'color-mix(in oklab, var(--danger) 10%, var(--surface))',
+              border: `1px solid ${saveMsg.startsWith('✅')
+                ? 'color-mix(in oklab, var(--success) 30%, var(--line))'
+                : 'color-mix(in oklab, var(--danger) 30%, var(--line))'}`,
+              color: saveMsg.startsWith('✅') ? 'var(--success)' : 'var(--danger)',
+            }}>
+            {saveMsg}
+          </div>
+        )}
+        {uploadStatus === 'uploading' && (
+          <div className="mb-3 p-3 rounded-xl text-[12.5px]"
+            style={{ background: 'color-mix(in oklab, var(--brand) 8%, var(--surface))', border: '1px solid color-mix(in oklab, var(--brand) 25%, var(--line))', color: 'var(--brand)' }}>
+            ⏳ Image is uploading… please wait before saving.
+          </div>
+        )}
+        <button
+          onClick={() => saveMut.mutate()}
+          disabled={isBusy}
+          className={`w-full h-12 rounded-xl font-semibold text-[14px] transition-all${isBusy ? ' btn-busy' : ''}`}
+          style={{
+            background: 'var(--brand)',
+            color:      '#fff',
+            boxShadow:  isBusy ? 'none' : '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)',
+          }}>
+          {saveMut.isPending ? 'Saving…'
+           : uploadStatus === 'uploading' ? 'Wait for upload…'
+           : '💾 Save all settings'}
+        </button>
+      </div>
     </div>
   );
 }

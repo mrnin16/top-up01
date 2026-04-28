@@ -82,7 +82,8 @@ export const api = {
       khqrAccountNo?:    string;
       khqrCity?:         string;
       announcementText?: string;
-      uiMode?:           'default' | 'liquid' | 'anime';
+      uiMode?:              'default' | 'liquid' | 'anime';
+      defaultBrandColor?:   string;
     }>('/settings/public'),
 
   // Catalog

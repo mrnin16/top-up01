@@ -27,7 +27,7 @@ export class CatalogService {
       include: { category: true },
       take: limit,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-      orderBy: [{ hot: 'desc' }, { isNew: 'desc' }, { title: 'asc' }],
+      orderBy: [{ sortOrder: 'asc' }, { hot: 'desc' }, { isNew: 'desc' }, { title: 'asc' }],
     });
   }
 

@@ -29,7 +29,7 @@ export class AdminService {
         packages: { orderBy: { sortOrder: 'asc' } },
         _count:   { select: { orders: true } },
       },
-      orderBy: [{ category: { sortOrder: 'asc' } }, { title: 'asc' }],
+      orderBy: [{ sortOrder: 'asc' }, { category: { sortOrder: 'asc' } }, { title: 'asc' }],
     });
   }
 
