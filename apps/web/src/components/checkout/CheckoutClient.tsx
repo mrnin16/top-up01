@@ -172,7 +172,7 @@ export function CheckoutClient({ orderId }: Props) {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5">
-        [
+        {[
           { label: t('cardNumber'), col: 'col-span-2', key: 'num',  type: 'text',     ph: '4242 4242 4242 4242', mono: true,
             change: (v: string) => { const n = v.replace(/\D/g,'').slice(0,16); setCard({...card, num: n.replace(/(.{4})/g,'$1 ').trim()}); } },
           { label: t('cardholder'), col: 'col-span-2',  key: 'name', type: 'text',     ph: 'Lina Sok', mono: false,
