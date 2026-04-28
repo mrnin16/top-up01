@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { useStore } from '@/lib/store';
 
 const NAV = [
-  { href: '/admin',           icon: '📊', label: 'Dashboard' },
-  { href: '/admin/products',  icon: '🎮', label: 'Products'  },
-  { href: '/admin/orders',    icon: '🧾', label: 'Orders'    },
-  { href: '/admin/settings',  icon: '⚙️',  label: 'Settings'  },
+  { href: '/admin',                icon: '📊', label: 'Dashboard'    },
+  { href: '/admin/products',       icon: '🎮', label: 'Products'     },
+  { href: '/admin/orders',         icon: '🧾', label: 'Orders'       },
+  { href: '/admin/settings',       icon: '⚙️',  label: 'Settings'     },
+  { href: '/admin/translations',   icon: '🌐', label: 'Translations' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

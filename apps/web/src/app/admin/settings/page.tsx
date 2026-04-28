@@ -1,8 +1,8 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { api } from '@/lib/api';
-import { TRANSLATIONS } from '@/lib/translations';
 
 export default function AdminSettingsPage() {
   const qc = useQueryClient();
@@ -311,44 +311,21 @@ export default function AdminSettingsPage() {
         </div>
       </section>
 
-      {/* ── Text Display (Multilingual) ───────────────────────────────────── */}
-      <section className="p-5 rounded-2xl border mb-4"
-        style={{ background: 'var(--surface)', borderColor: 'var(--line)', boxShadow: 'var(--shadow-sm)' }}>
-        <h2 className="font-sora font-bold text-[16px] mb-1 m-0">Text Display</h2>
-        <p className="text-[12.5px] mb-4 mt-0" style={{ color: 'var(--muted)' }}>
-          Customize labels in English and Khmer. Bundled defaults are shown as placeholders — leave empty to keep them.
-        </p>
-
-        <div className="flex flex-col gap-4">
-          {Object.entries(TRANSLATIONS).map(([key, defaults]) => (
-            <div key={key} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="sm:col-span-2 text-[12px] font-medium" style={{ color: 'var(--ink-2)' }}>
-                {key} <span className="font-normal" style={{ color: 'var(--muted)' }}>· admin override</span>
-              </div>
-              <div>
-                <label className="block text-[10.5px] mb-1" style={{ color: 'var(--muted)' }}>🇬🇧 English</label>
-                <input
-                  className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
-                  style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}
-                  placeholder={defaults.en}
-                  value={field(`text.${key}.en`)}
-                  onChange={e => set(`text.${key}.en`, e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-[10.5px] mb-1" style={{ color: 'var(--muted)' }}>🇰🇭 ខ្មែរ</label>
-                <input
-                  className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
-                  style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}
-                  placeholder={defaults.km}
-                  value={field(`text.${key}.km`)}
-                  onChange={e => set(`text.${key}.km`, e.target.value)}
-                />
-              </div>
-            </div>
-          ))}
+      {/* ── Text & Translations ────────────────────────────────────────────── */}
+      <Link href="/admin/translations"
+        className="flex items-center justify-between p-5 rounded-2xl border mb-4 no-underline transition-all hover:-translate-y-0.5"
+        style={{ background: 'var(--surface)', borderColor: 'var(--line)', boxShadow: 'var(--shadow-sm)', color: 'var(--ink)' }}>
+        <div className="flex items-center gap-3">
+          <span className="text-2xl">🌐</span>
+          <div>
+            <b className="font-sora font-bold text-[15px] block">Text &amp; Translations</b>
+            <span className="text-[12.5px]" style={{ color: 'var(--muted)' }}>
+              Customize all labels in English and Khmer
+            </span>
+          </div>
         </div>
-      </section>
+        <span className="text-lg" style={{ color: 'var(--muted)' }}>→</span>
+      </Link>
 
       {/* ── Save button + status ───────────────────────────────────────────── */}
       {saveMsg && (
