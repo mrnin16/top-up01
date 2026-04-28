@@ -9,6 +9,10 @@ import { JwtAuthGuard }   from '../auth/jwt-auth.guard';
 import { RolesGuard, Roles } from '../auth/roles.guard';
 import { AdminService }   from './admin.service';
 import { ConfigService }  from '@nestjs/config';
+import { v2 as cloudinary } from 'cloudinary';
+import { randomBytes } from 'crypto';
+import { extname, join } from 'path';
+import { writeFileSync, mkdirSync } from 'fs';
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -48,10 +52,32 @@ export class AdminController {
   @ApiConsumes('multipart/form-data')
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  upload(@UploadedFile() file: Express.Multer.File) {
+  async upload(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new Error('No file uploaded');
+
+    const cloudName  = this.config.get<string>('CLOUDINARY_CLOUD_NAME');
+    const apiKey     = this.config.get<string>('CLOUDINARY_API_KEY');
+    const apiSecret  = this.config.get<string>('CLOUDINARY_API_SECRET');
+
+    if (cloudName && apiKey && apiSecret) {
+      // ── Cloudinary (production) ──────────────────────────────────────────
+      cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
+      const url = await new Promise<string>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          { folder: 'topup', resource_type: 'image' },
+          (err, result) => { if (err || !result) reject(err); else resolve(result.secure_url); },
+        ).end(file.buffer);
+      });
+      return { url, filename: file.originalname };
+    }
+
+    // ── Local disk fallback (development) ────────────────────────────────
+    const uploadsDir = join(process.cwd(), 'uploads');
+    mkdirSync(uploadsDir, { recursive: true });
+    const filename = `${randomBytes(12).toString('hex')}${extname(file.originalname).toLowerCase()}`;
+    writeFileSync(join(uploadsDir, filename), file.buffer);
     const base = this.config.get<string>('API_ORIGIN') ?? 'http://localhost:4000';
-    return { url: `${base}/uploads/${file.filename}`, filename: file.filename };
+    return { url: `${base}/uploads/${filename}`, filename };
   }
 
   // ── Settings ──────────────────────────────────────────────────────────────────

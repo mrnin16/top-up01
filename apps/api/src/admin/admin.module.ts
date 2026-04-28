@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { randomBytes } from 'crypto';
+import { memoryStorage } from 'multer';
+import { extname } from 'path';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { AuthModule } from '../auth/auth.module';
@@ -11,13 +10,7 @@ import { AuthModule } from '../auth/auth.module';
   imports: [
     AuthModule,
     MulterModule.register({
-      storage: diskStorage({
-        destination: join(process.cwd(), 'uploads'),
-        filename: (_req, file, cb) => {
-          const hex = randomBytes(12).toString('hex');
-          cb(null, `${hex}${extname(file.originalname).toLowerCase()}`);
-        },
-      }),
+      storage: memoryStorage(),   // buffer in memory; controller decides where to persist
       fileFilter: (_req, file, cb) => {
         const allowed = /\.(jpg|jpeg|png|webp|gif|svg)$/i;
         if (allowed.test(extname(file.originalname))) {
@@ -26,7 +19,7 @@ import { AuthModule } from '../auth/auth.module';
           cb(new Error('Only image files are allowed'), false);
         }
       },
-      limits: { fileSize: 5 * 1024 * 1024 },   // 5 MB
+      limits: { fileSize: 5 * 1024 * 1024 },
     }),
   ],
   controllers: [AdminController],
