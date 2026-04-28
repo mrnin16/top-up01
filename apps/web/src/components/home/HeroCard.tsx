@@ -1,4 +1,8 @@
+'use client';
+import { useT } from '@/lib/i18n';
+
 export function HeroCard() {
+  const t = useT();
   return (
     <section className="px-8 py-5">
       <div
@@ -15,19 +19,19 @@ export function HeroCard() {
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] tracking-widest uppercase"
             style={{ background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.18)', color: '#dbe1ff' }}
           >
-            ✦ Limited · Diamond Friday
+            {t('heroBadge', '✦ Limited · Diamond Friday')}
           </span>
           <h2
             className="mt-3 mb-2 font-sora font-bold leading-tight"
             style={{ fontSize: 34, letterSpacing: '-.02em' }}
           >
-            Top up your favorite games in seconds.
+            {t('heroTitle', 'Top up your favorite games in seconds.')}
           </h2>
           <p style={{ color: '#c9d1ee', fontSize: 14, lineHeight: 1.6 }}>
-            Direct delivery or instant code redemption. KHQR, bank transfer, and cards accepted.
+            {t('heroSubtitle', 'Direct delivery or instant code redemption. KHQR, bank transfer, and cards accepted.')}
           </p>
           <div className="flex gap-3 mt-4">
-            {[['180+', 'Games & services'], ['~9s', 'Avg delivery'], ['4.9★', '50k+ reviews']].map(([v, l]) => (
+            {[['180+', t('heroStatGames')], ['~9s', t('heroStatDelivery')], ['4.9★', t('heroStatRating')]].map(([v, l]) => (
               <div
                 key={l}
                 className="rounded-xl px-3 py-2 min-w-[100px]"

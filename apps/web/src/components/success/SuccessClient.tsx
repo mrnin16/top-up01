@@ -5,21 +5,23 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { TopNav } from '@/components/layout/TopNav';
+import { useT } from '@/lib/i18n';
 
 interface Props { orderId: string; }
-
-const STATUS_LABEL: Record<string, string> = {
-  PENDING:    'Awaiting payment',
-  PAID:       'Payment received',
-  DELIVERING: 'Delivering…',
-  DELIVERED:  'Delivered',
-  FAILED:     'Failed',
-  REFUNDED:   'Refunded',
-};
 
 export function SuccessClient({ orderId }: Props) {
   const router = useRouter();
   const qc     = useQueryClient();
+  const t      = useT();
+
+  const STATUS_LABEL: Record<string, string> = {
+    PENDING:    t('awaitingPayment'),
+    PAID:       t('paymentReceived'),
+    DELIVERING: t('delivering'),
+    DELIVERED:  t('delivered'),
+    FAILED:     t('failed'),
+    REFUNDED:   t('refunded'),
+  };
 
   const { data: order } = useQuery({
     queryKey: ['order', orderId],
@@ -135,24 +137,24 @@ export function SuccessClient({ orderId }: Props) {
       {isCode && (
         delivered && order.redeemCode ? (
           <>
-            <div className="text-[11px] uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>Your redeem code</div>
+            <div className="text-[11px] uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>{t('yourRedeemCode')}</div>
             <div className="font-mono text-[20px] md:text-[22px] font-semibold tracking-[3px] mb-3 break-all">{order.redeemCode}</div>
             <button
               onClick={copyCode}
               className="px-4 py-2 rounded-lg border text-[12.5px] font-medium inline-flex items-center gap-1.5 transition-all"
               style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>
-              📋 {copied ? 'Copied!' : 'Copy code'}
+              📋 {copied ? t('copied') : t('copyCode')}
             </button>
             <p className="text-[11.5px] mt-3 mb-0" style={{ color: 'var(--muted)' }}>
-              Open {productTitle} → Top-up center → Redeem code.
+              {t('open')} {productTitle} {t('redeemCodeHowTo')}
             </p>
           </>
         ) : failed ? (
-          <p className="m-0" style={{ color: 'var(--danger)' }}>Code generation failed. Contact support.</p>
+          <p className="m-0" style={{ color: 'var(--danger)' }}>{t('codeGenerationFailed')}</p>
         ) : (
           <p className="m-0" style={{ color: 'var(--muted)' }}>
             <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ background: 'var(--brand)', animation: 'pulse 1.4s infinite' }} />
-            Generating your code…
+            {t('generatingCode')}
           </p>
         )
       )}
@@ -160,28 +162,28 @@ export function SuccessClient({ orderId }: Props) {
       {/* Direct flow */}
       {!isCode && (
         <>
-          <div className="text-[11px] uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>Direct delivery</div>
+          <div className="text-[11px] uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>{t('directDelivery')}</div>
           <div className="font-sora text-[18px] md:text-[20px] font-semibold mb-1">
             {amount.toLocaleString()}{bonus ? ` +${bonus}` : ''} {currency}
           </div>
           <div className="text-[12.5px]" style={{ color: 'var(--muted)' }}>
-            → ID <span className="font-mono">{order.gameUserId}</span> · Zone <span className="font-mono">{order.zoneId}</span>
+            {t('toId')} <span className="font-mono">{order.gameUserId}</span> {t('zonePrefix')} <span className="font-mono">{order.zoneId}</span>
           </div>
           {inProgress && (
             <div className="flex items-center gap-2 justify-center mt-4 font-medium text-[12.5px]" style={{ color: 'var(--brand)' }}>
               <span className="w-2 h-2 rounded-full" style={{ background: 'var(--brand)', animation: 'pulse 1.4s infinite' }} />
-              Delivery in progress…
+              {t('deliveryInProgress')}
             </div>
           )}
           {delivered && (
             <div className="flex items-center gap-2 justify-center mt-4 font-medium text-[12.5px]" style={{ color: 'var(--success)' }}>
-              ✓ {amount.toLocaleString()} {currency} delivered
-              {order.deliveredAt && ` at ${new Date(order.deliveredAt).toLocaleTimeString()}`}
+              ✓ {amount.toLocaleString()} {currency} {t('delivered').toLowerCase()}
+              {order.deliveredAt && ` ${t('at')} ${new Date(order.deliveredAt).toLocaleTimeString()}`}
             </div>
           )}
           {failed && (
             <div className="mt-4 font-medium text-[12.5px]" style={{ color: 'var(--danger)' }}>
-              ✕ Delivery failed — refund initiated
+              {t('deliveryFailedRefund')}
             </div>
           )}
         </>
@@ -191,13 +193,13 @@ export function SuccessClient({ orderId }: Props) {
 
   const receipt = () => (
     <div className="rounded-2xl p-5" style={{ background: 'var(--surface)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
-      <h4 className="font-sora text-[15px] font-bold m-0 mb-3.5">Receipt</h4>
+      <h4 className="font-sora text-[15px] font-bold m-0 mb-3.5">{t('receipt')}</h4>
       {([
-        ['Order',       order.ref],
-        ['Item',        productTitle],
-        ['Package',     `${amount.toLocaleString()}${bonus ? ` +${bonus}` : ''} ${currency}`],
-        ['Method',      paymentLabel],
-        ['Service fee', `$${(order.feeCents / 100).toFixed(2)}`],
+        [t('order'),        order.ref],
+        [t('item'),         productTitle],
+        [t('packageLabel'), `${amount.toLocaleString()}${bonus ? ` +${bonus}` : ''} ${currency}`],
+        [t('method'),       paymentLabel],
+        [t('serviceFee'),   `$${(order.feeCents / 100).toFixed(2)}`],
       ] as [string, string][]).map(([k, v]) => (
         <div key={k} className="flex justify-between py-2.5 text-[13px]" style={{ borderBottom: '1px dashed var(--line)' }}>
           <span style={{ color: 'var(--muted)' }}>{k}</span>
@@ -205,11 +207,11 @@ export function SuccessClient({ orderId }: Props) {
         </div>
       ))}
       <div className="flex items-baseline justify-between pt-4">
-        <span className="text-[12px]" style={{ color: 'var(--muted)' }}>Paid</span>
+        <span className="text-[12px]" style={{ color: 'var(--muted)' }}>{t('paid')}</span>
         <b className="font-sora text-[20px] font-bold">${(order.totalCents / 100).toFixed(2)}</b>
       </div>
       <div className="flex items-center gap-2 mt-4 p-2.5 rounded-xl text-[11.5px]" style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}>
-        🧾 A receipt was sent to your email.
+        {t('receiptEmailNotice')}
       </div>
     </div>
   );
@@ -218,7 +220,7 @@ export function SuccessClient({ orderId }: Props) {
     <>
       {successIcon()}
       <h2 className="font-sora text-[22px] md:text-[24px] font-bold m-0">
-        {failed ? 'Payment failed' : delivered ? 'All done!' : 'Payment successful'}
+        {failed ? t('paymentFailed') : delivered ? t('allDone') : t('paymentSuccessful')}
       </h2>
       <p className="mt-1.5" style={{ color: 'var(--muted)', fontSize: 13.5 }}>
         Order <span className="font-mono">{order.ref}</span> · {new Date(order.createdAt).toLocaleString()}
@@ -258,12 +260,12 @@ export function SuccessClient({ orderId }: Props) {
           <Link href="/account/orders"
             className="h-12 rounded-xl border text-[13.5px] font-semibold no-underline grid place-items-center"
             style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
-            All orders
+            {t('allOrders')}
           </Link>
           <Link href="/"
             className="h-12 rounded-xl text-[13.5px] font-semibold no-underline grid place-items-center text-white"
             style={{ background: 'var(--brand)', boxShadow: '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)' }}>
-            Top up again
+            {t('topUpAgain')}
           </Link>
         </div>
       </div>
@@ -286,12 +288,12 @@ export function SuccessClient({ orderId }: Props) {
             <Link href="/account/orders"
               className="inline-flex items-center px-5 h-[44px] rounded-xl border text-[13.5px] font-semibold no-underline"
               style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
-              View all orders
+              {t('viewAllOrders')}
             </Link>
             <Link href={order.product?.slug ? `/p/${order.product.slug}` : '/'}
               className="inline-flex items-center px-5 h-[44px] rounded-xl text-[13.5px] font-semibold no-underline text-white"
               style={{ background: 'var(--brand)', boxShadow: '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)' }}>
-              Top up again
+              {t('topUpAgain')}
             </Link>
           </div>
         </div>

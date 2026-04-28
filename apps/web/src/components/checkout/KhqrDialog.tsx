@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useT } from '@/lib/i18n';
 
 interface Props {
   /** Merchant's uploaded KHQR image URL */
@@ -25,6 +26,7 @@ export function KhqrDialog({
   onSimulate,
   onClose,
 }: Props) {
+  const t = useT();
   const [shared,     setShared]     = useState(false);
   const [imageError, setImageError] = useState(false);
   const [timer,      setTimer]      = useState(599);
@@ -127,7 +129,7 @@ export function KhqrDialog({
         <div className="flex items-center justify-between px-5 pt-3 pb-3 flex-none border-b"
           style={{ borderColor: 'var(--line)' }}>
           <div>
-            <h2 className="font-sora font-bold text-[17px] m-0">Scan to pay</h2>
+            <h2 className="font-sora font-bold text-[17px] m-0">{t('scanToPay')}</h2>
             <p className="text-[12px] m-0 mt-0.5" style={{ color: 'var(--muted)' }}>
               {merchantName && <><b>{merchantName}</b> · </>}
               <span className="font-mono">{orderRef}</span>
@@ -189,12 +191,11 @@ export function KhqrDialog({
           <div className="mt-4 flex items-center gap-1.5 text-[12px] font-semibold"
             style={{ color: timer < 60 ? 'var(--danger)' : 'var(--muted)' }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: timer < 60 ? 'var(--danger)' : 'var(--success)', animation: 'pulse 1.4s infinite' }} />
-            Expires in {fmtTimer}
+            {t('expiresIn')} {fmtTimer}
           </div>
 
           <p className="mt-2 text-[12.5px] text-center" style={{ color: 'var(--muted)' }}>
-            Open ABA · ACLEDA · Wing · Chip Mong or any KHQR app,<br/>
-            scan this code, then enter <b>${total.toFixed(2)}</b> as the amount.
+            {t('khqrInstructions')} <b>${total.toFixed(2)}</b> {t('asTheAmount')}
           </p>
 
           {/* Action row */}
@@ -206,7 +207,7 @@ export function KhqrDialog({
                 onClick={handleShare}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all hover:opacity-85"
                 style={{ background: 'var(--brand)', color: '#fff', boxShadow: '0 4px 12px -2px color-mix(in oklab, var(--brand) 40%, transparent)' }}>
-                {shared ? '✓ Shared!' : '↗ Share'}
+                {shared ? t('shared') : t('share')}
               </button>
             )}
 
@@ -216,7 +217,7 @@ export function KhqrDialog({
                 onClick={handleSave}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-[13px] font-medium transition-all hover:opacity-85"
                 style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
-                ⬇ Save
+                {t('saveImage')}
               </button>
             )}
 
@@ -224,9 +225,9 @@ export function KhqrDialog({
             <button
               onClick={onSimulate}
               disabled={scanning}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-[13px] font-medium transition-all hover:opacity-85 disabled:opacity-50"
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl border text-[13px] font-medium transition-all hover:opacity-85${scanning?' btn-busy':''}`}
               style={{ background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--muted)' }}>
-              {scanning ? '⏳ Waiting…' : '🧪 Simulate'}
+              {scanning ? t('waiting') : t('simulateAction')}
             </button>
           </div>
         </div>
@@ -237,17 +238,17 @@ export function KhqrDialog({
           <button
             onClick={onSimulate}
             disabled={scanning}
-            className="w-full h-12 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 transition-all"
+            className={`w-full h-12 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 transition-all${scanning?' btn-busy':''}`}
             style={{
-              background: scanning ? 'var(--surface-2)' : 'var(--brand)',
-              color:      scanning ? 'var(--muted-2)'   : '#fff',
+              background: 'var(--brand)',
+              color:      '#fff',
               border:     0,
               boxShadow:  scanning ? 'none' : '0 8px 20px -4px color-mix(in oklab, var(--brand) 40%, transparent)',
             }}>
-            {scanning ? '⏳ Verifying payment…' : '✓ I have paid — confirm'}
+            {scanning ? t('verifyingPayment') : t('iHavePaidConfirm')}
           </button>
           <p className="mt-2 text-[11px] text-center" style={{ color: 'var(--muted)' }}>
-            🛡 Click after completing payment in your banking app
+            {t('clickAfterPaid')}
           </p>
         </div>
       </div>
@@ -258,10 +259,11 @@ export function KhqrDialog({
 
 // Lazy QR fallback to avoid SSR issues with qrcode.react
 function QrFallback({ value }: { value: string }) {
+  const t = useT();
   const [QR, setQR] = useState<any>(null);
   useEffect(() => {
     import('qrcode.react').then(m => setQR(() => m.QRCodeSVG));
   }, []);
-  if (!QR) return <div className="w-full h-full grid place-items-center text-sm" style={{ color: 'var(--muted)' }}>Loading…</div>;
+  if (!QR) return <div className="w-full h-full grid place-items-center text-sm" style={{ color: 'var(--muted)' }}>{t('processing')}</div>;
   return <QR value={value} size={220} />;
 }

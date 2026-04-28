@@ -4,6 +4,7 @@ import { useQuery, useMutation }             from '@tanstack/react-query';
 import { useRouter }                         from 'next/navigation';
 import { QRCodeSVG }                         from 'qrcode.react';
 import { api }                               from '@/lib/api';
+import { useT }                              from '@/lib/i18n';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const BANKS = [
@@ -11,12 +12,6 @@ const BANKS = [
   { id: 'acleda',   name: 'ACLEDA',    color: '#0f7c4a' },
   { id: 'wing',     name: 'Wing Bank', color: '#19a3ff' },
   { id: 'chipmong', name: 'Chip Mong', color: '#d11f2f' },
-] as const;
-
-const PAY_METHODS = [
-  { id: 'khqr', label: 'KHQR',             sub: 'Scan with any Cambodian bank app', icon: '⬛' },
-  { id: 'bank', label: 'Direct Bank',       sub: 'ABA · ACLEDA · Wing · Chip Mong', icon: '🏦' },
-  { id: 'card', label: 'Visa / Mastercard', sub: 'Credit or debit card',             icon: '💳' },
 ] as const;
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -28,6 +23,13 @@ interface Props {
 // ── Component ────────────────────────────────────────────────────────────────
 export function PaymentDialog({ orderId, onClose }: Props) {
   const router = useRouter();
+  const t = useT();
+
+  const PAY_METHODS = [
+    { id: 'khqr' as const, label: 'KHQR',                  sub: t('scanWithCambodianBank'),         icon: '⬛' },
+    { id: 'bank' as const, label: t('directBankLabel'),    sub: 'ABA · ACLEDA · Wing · Chip Mong',  icon: '🏦' },
+    { id: 'card' as const, label: t('visaMastercard'),     sub: t('creditOrDebitCard'),             icon: '💳' },
+  ];
 
   const [method,   setMethod]   = useState<'khqr' | 'bank' | 'card'>('khqr');
   const [bank,     setBank]     = useState<string>('aba');
@@ -129,7 +131,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
           style={{ width: 188, height: 188, borderColor: 'var(--line)', boxShadow: 'var(--shadow-sm)' }}>
           {khqrData?.qrString
             ? <QRCodeSVG value={khqrData.qrString} size={164} />
-            : <div className="w-full h-full grid place-items-center animate-pulse text-sm" style={{ color: 'var(--muted)' }}>Loading…</div>
+            : <div className="w-full h-full grid place-items-center animate-pulse text-sm" style={{ color: 'var(--muted)' }}>{t('processing')}</div>
           }
         </div>
 
@@ -138,9 +140,9 @@ export function PaymentDialog({ orderId, onClose }: Props) {
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[12px] font-semibold border mb-2.5"
             style={{ borderColor: 'var(--line)' }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--success)', animation: 'pulse 1.4s infinite' }} />
-            Expires in {fmtTimer}
+            {t('expiresIn')} {fmtTimer}
           </span>
-          <h4 className="font-sora font-bold text-[15px] mb-1">Scan with any KHQR app</h4>
+          <h4 className="font-sora font-bold text-[15px] mb-1">{t('scanKhqrApp')}</h4>
           <p className="text-[12px] mb-2.5" style={{ color: 'var(--muted)' }}>
             ABA · ACLEDA · Wing · Chip Mong · TrueMoney &amp; more
           </p>
@@ -151,10 +153,11 @@ export function PaymentDialog({ orderId, onClose }: Props) {
             ))}
           </div>
           <button
-            className="px-4 py-2 rounded-xl border text-[12.5px] font-medium transition-all hover:opacity-80"
+            disabled={scanning}
+            className={`px-4 py-2 rounded-xl border text-[12.5px] font-medium transition-all hover:opacity-80${scanning?' btn-busy':''}`}
             style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}
             onClick={() => { setScanning(true); simulate.mutate(); }}>
-            {scanning ? '⏳ Waiting for payment…' : '🧪 Simulate scan'}
+            {scanning ? t('waitingForPayment') : t('simulateScan')}
           </button>
         </div>
       </div>
@@ -164,7 +167,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
   const bankPanel = () => (
     <div className="mt-3 p-4 rounded-2xl border border-dashed"
       style={{ background: 'var(--surface-2)', borderColor: 'var(--line)' }}>
-      <h4 className="font-sora font-bold text-[14px] mb-3">Pick your bank</h4>
+      <h4 className="font-sora font-bold text-[14px] mb-3">{t('pickYourBank')}</h4>
       <div className="grid grid-cols-2 gap-2">
         {BANKS.map(b => (
           <button key={b.id} aria-pressed={bank === b.id} onClick={() => setBank(b.id)}
@@ -184,7 +187,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
       </div>
       <div className="mt-3 p-3 rounded-xl text-[12px]"
         style={{ background: 'color-mix(in oklab, var(--brand) 8%, var(--surface))', border: '1px solid color-mix(in oklab, var(--brand) 25%, var(--line))' }}>
-        ℹ You'll be redirected to <b>{BANKS.find(b => b.id === bank)?.name}</b> to confirm <b>${total.toFixed(2)}</b>.
+        {t('bankRedirectNotice')} <b>{BANKS.find(b => b.id === bank)?.name}</b> {t('toConfirm')} <b>${total.toFixed(2)}</b>.
       </div>
     </div>
   );
@@ -212,13 +215,13 @@ export function PaymentDialog({ orderId, onClose }: Props) {
       {/* Card fields */}
       <div className="grid grid-cols-2 gap-2.5">
         {[
-          { label: 'Card number', span: 2, key: 'num',  ph: '4242 4242 4242 4242', mono: true,
+          { label: t('cardNumber'), span: 2, key: 'num',  ph: '4242 4242 4242 4242', mono: true,
             fn: (v: string) => { const n = v.replace(/\D/g,'').slice(0,16); setCard(c => ({...c, num: n.replace(/(.{4})/g,'$1 ').trim()})); } },
-          { label: 'Cardholder',  span: 2, key: 'name', ph: 'Lina Sok', mono: false,
+          { label: t('cardholder'),  span: 2, key: 'name', ph: 'Lina Sok', mono: false,
             fn: (v: string) => setCard(c => ({...c, name: v.toUpperCase()})) },
-          { label: 'Expiry',      span: 1, key: 'exp',  ph: 'MM/YY', mono: true,
+          { label: t('expiry'),      span: 1, key: 'exp',  ph: 'MM/YY', mono: true,
             fn: (v: string) => { let n=v.replace(/\D/g,'').slice(0,4); if(n.length>2) n=n.slice(0,2)+'/'+n.slice(2); setCard(c=>({...c,exp:n})); } },
-          { label: 'CVC',         span: 1, key: 'cvc',  ph: '123', mono: true,
+          { label: t('cvc'),         span: 1, key: 'cvc',  ph: '123', mono: true,
             fn: (v: string) => setCard(c => ({...c, cvc: v.replace(/\D/g,'').slice(0,4)})) },
         ].map(f => (
           <div key={f.key} className={f.span === 2 ? 'col-span-2' : ''}>
@@ -235,7 +238,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
       </div>
       <div className="mt-2.5 p-2.5 rounded-xl text-[11.5px]"
         style={{ background: 'color-mix(in oklab, var(--success) 8%, var(--surface))', border: '1px solid color-mix(in oklab, var(--success) 25%, var(--line))' }}>
-        🔒 Secured by 3-D Secure 2.0. Card details never touch our servers.
+        {t('cardSecurityNotice')}
       </div>
     </div>
   );
@@ -267,7 +270,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
         <div className="flex items-center justify-between px-5 pt-3 pb-3 flex-none border-b"
           style={{ borderColor: 'var(--line)' }}>
           <div>
-            <h2 className="font-sora font-bold text-[17px] m-0 leading-tight">Choose payment</h2>
+            <h2 className="font-sora font-bold text-[17px] m-0 leading-tight">{t('choosePayment')}</h2>
             <p className="text-[12px] m-0 mt-0.5" style={{ color: 'var(--muted)' }}>
               {product.title ?? 'Order'} · <span className="font-mono">{order.ref}</span>
             </p>
@@ -287,7 +290,7 @@ export function PaymentDialog({ orderId, onClose }: Props) {
             {PAY_METHODS.map(m => (
               <button key={m.id} aria-pressed={method === m.id}
                 onClick={() => setMethod(m.id)}
-                className="flex items-center gap-3 p-3.5 rounded-xl border-[1.5px] w-full text-left transition-all duration-150"
+                className="tap-bounce-sm flex items-center gap-3 p-3.5 rounded-xl border-[1.5px] w-full text-left"
                 style={{
                   background:  method === m.id ? 'color-mix(in oklab, var(--brand) 5%, var(--surface))' : 'var(--surface)',
                   borderColor: method === m.id ? 'var(--brand)' : 'var(--line)',
@@ -330,18 +333,18 @@ export function PaymentDialog({ orderId, onClose }: Props) {
             <div>
               {order.discountCents > 0 && (
                 <p className="text-[11.5px] m-0 mb-0.5" style={{ color: 'var(--success)' }}>
-                  🏷 Saved ${(order.discountCents / 100).toFixed(2)}
+                  {t('savedShort')} ${(order.discountCents / 100).toFixed(2)}
                 </p>
               )}
               <div className="flex items-baseline gap-1.5">
                 <span className="font-sora font-bold text-[22px]">${total.toFixed(2)}</span>
                 <span className="text-[11px]" style={{ color: 'var(--muted)' }}>
-                  incl. ${fee.toFixed(2)} fee · USD
+                  {t('including')} ${fee.toFixed(2)} {t('fee')} · USD
                 </span>
               </div>
             </div>
             <span className="text-[11px] text-right" style={{ color: 'var(--muted)' }}>
-              🛡 SSL · PCI-DSS
+              🛡 {t('sslPciBadge')}
             </span>
           </div>
 
@@ -357,10 +360,10 @@ export function PaymentDialog({ orderId, onClose }: Props) {
               boxShadow:  canPay && !scanning ? '0 8px 20px -4px color-mix(in oklab, var(--brand) 40%, transparent)' : 'none',
             }}>
             {method === 'khqr'
-              ? '⬛ I\'ve paid via KHQR'
+              ? t('iVePaidKhqr')
               : method === 'bank'
-              ? `🏦 Continue to ${BANKS.find(b => b.id === bank)?.name}`
-              : `🔒 Pay $${total.toFixed(2)}`}
+              ? `${t('continueToBank')} ${BANKS.find(b => b.id === bank)?.name}`
+              : `${t('payWithCard')} $${total.toFixed(2)}`}
           </button>
         </div>
       </div>

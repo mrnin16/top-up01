@@ -14,12 +14,17 @@ export class CatalogController {
 
   // ── Public platform settings (KHQR image, merchant info, announcement) ──
   // No auth required — used by the checkout flow for every visitor.
-  @ApiOperation({ summary: 'Public platform settings (KHQR image, merchant info)' })
+  @ApiOperation({ summary: 'Public platform settings (KHQR image, merchant info, multilingual text)' })
   @Get('settings/public')
   async publicSettings() {
+    // Fixed keys + all "text.*" multilingual display strings (e.g. text.heroTitle.en, text.heroTitle.km)
+    const fixed = ['khqrImageUrl', 'khqrMerchantName', 'khqrMerchantId', 'khqrAccountNo', 'khqrCity', 'announcementText', 'uiMode'];
     const rows = await this.prisma.setting.findMany({
       where: {
-        key: { in: ['khqrImageUrl', 'khqrMerchantName', 'khqrMerchantId', 'khqrAccountNo', 'khqrCity', 'announcementText', 'uiMode'] },
+        OR: [
+          { key: { in: fixed } },
+          { key: { startsWith: 'text.' } },
+        ],
       },
     });
     return Object.fromEntries(rows.map((r: { key: string; value: string }) => [r.key, r.value]));

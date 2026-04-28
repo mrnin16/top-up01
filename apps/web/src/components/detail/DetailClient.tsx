@@ -9,6 +9,7 @@ import { computeFeeCents }                           from '@topup/shared';
 import { TopNav }                                    from '@/components/layout/TopNav';
 import { DiamondCluster }                            from './DiamondGem';
 import { KhqrDialog }                               from '@/components/checkout/KhqrDialog';
+import { useT }                                     from '@/lib/i18n';
 
 interface Props { slug: string; }
 
@@ -27,6 +28,7 @@ const PAY_METHODS = [
 
 export function DetailClient({ slug }: Props) {
   const router         = useRouter();
+  const t              = useT();
   const setCheckout    = useStore(s => s.setCheckout);
   const user           = useStore(s => s.user);
   const pushGuestOrder = useStore(s => s.pushGuestOrder);
@@ -175,7 +177,7 @@ export function DetailClient({ slug }: Props) {
 
     return (
       <button key={p.id} aria-pressed={sel} onClick={() => setPkg(sel ? null : p)}
-        className="relative flex flex-col items-center pt-3 pb-2.5 px-2 rounded-2xl border-[1.5px] text-center transition-all duration-150 hover:-translate-y-0.5"
+        className="tap-bounce-sm relative flex flex-col items-center pt-3 pb-2.5 px-2 rounded-2xl border-[1.5px] text-center hover:-translate-y-0.5"
         style={{
           background:  sel ? 'color-mix(in oklab, var(--brand) 7%, var(--surface))' : 'var(--surface)',
           borderColor: sel ? 'var(--brand)'  : 'var(--line)',
@@ -186,7 +188,7 @@ export function DetailClient({ slug }: Props) {
         {(p.popular || p.best) && (
           <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase text-white whitespace-nowrap"
             style={{ background: p.best ? 'var(--brand)' : 'var(--accent)' }}>
-            {p.best ? 'Best' : 'Popular'}
+            {p.best ? t('best') : t('popular')}
           </span>
         )}
 
@@ -240,9 +242,9 @@ export function DetailClient({ slug }: Props) {
   const paymentSection = () => (
     <div ref={paymentRef}>
       <div className="flex items-center gap-2 mb-3">
-        <h3 className="font-sora font-bold text-[14px] m-0">💳 Payment method</h3>
+        <h3 className="font-sora font-bold text-[14px] m-0">{t('paymentMethod')}</h3>
         {!ready && <span className="text-[10.5px] px-2 py-0.5 rounded-full"
-          style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}>Select a package above</span>}
+          style={{ background: 'var(--surface-2)', color: 'var(--muted)' }}>{t('selectPackageAbove')}</span>}
       </div>
 
       {/* Method tabs */}
@@ -333,7 +335,7 @@ export function DetailClient({ slug }: Props) {
           style={{ background:'color-mix(in oklab, var(--success) 8%, var(--surface))', borderColor:'color-mix(in oklab, var(--success) 40%, var(--line))' }}>
           <div className="flex items-center gap-2 text-[13px] font-semibold">
             <span className="w-2 h-2 rounded-full" style={{ background:'var(--success)', animation:'pulse 1.4s infinite' }}/>
-            KHQR ready — tap to view &amp; pay
+            {t('khqrReadyTap')}
           </div>
           <span className="text-[13px]" style={{ color:'var(--muted)' }}>→</span>
         </button>
@@ -375,14 +377,14 @@ export function DetailClient({ slug }: Props) {
               const dis = m==='direct' ? !product.supportsDirect : !product.supportsCode;
               return (
                 <button key={m} disabled={dis} aria-pressed={method===m} onClick={()=>setMethod(m)}
-                  className="relative p-3 rounded-xl border-[1.5px] text-left transition-all"
+                  className="tap-bounce-sm relative p-3 rounded-xl border-[1.5px] text-left"
                   style={{ background:method===m?'color-mix(in oklab, var(--brand) 5%, var(--surface))':'var(--surface)', borderColor:method===m?'var(--brand)':'var(--line)', opacity:dis?.4:1 }}>
                   <span className="absolute top-2.5 right-2.5 w-4 h-4 rounded-full border grid place-items-center text-[9px]"
                     style={{ background:method===m?'var(--brand)':undefined, borderColor:method===m?'var(--brand)':'var(--line-strong)', color:method===m?'#fff':undefined }}>
                     {method===m?'✓':''}
                   </span>
-                  <h4 className="font-sora text-[12px] font-bold m-0 mb-0.5 pr-5">{m==='direct'?'Direct top-up':'Get a code'}</h4>
-                  <p className="text-[10px] m-0" style={{ color:'var(--muted)' }}>{m==='direct'?'Sent to your account':'Redeem in-game'}</p>
+                  <h4 className="font-sora text-[12px] font-bold m-0 mb-0.5 pr-5">{m==='direct'?t('directTopup'):t('getACode')}</h4>
+                  <p className="text-[10px] m-0" style={{ color:'var(--muted)' }}>{m==='direct'?t('directTopupSub'):t('redeemInGame')}</p>
                 </button>
               );
             })}
@@ -393,7 +395,7 @@ export function DetailClient({ slug }: Props) {
             <div>
               <div className="grid gap-2" style={{ gridTemplateColumns:'1fr 90px' }}>
                 <div>
-                  <label className="block text-[10.5px] font-medium mb-1" style={{ color:'var(--ink-2)' }}>Game User ID</label>
+                  <label className="block text-[10.5px] font-medium mb-1" style={{ color:'var(--ink-2)' }}>{t('gameUserId')}</label>
                   <div className="relative">
                     <input className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
                       style={{ background:'var(--surface)', borderColor:gameUserId&&gameUserId.length<6?'var(--danger)':'var(--line)', color:'var(--ink)' }}
@@ -403,7 +405,7 @@ export function DetailClient({ slug }: Props) {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[10.5px] font-medium mb-1" style={{ color:'var(--ink-2)' }}>Zone</label>
+                  <label className="block text-[10.5px] font-medium mb-1" style={{ color:'var(--ink-2)' }}>{t('zoneLabel')}</label>
                   <div className="relative">
                     <input className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
                       style={{ background:'var(--surface)', borderColor:'var(--line)', color:'var(--ink)' }}
@@ -416,7 +418,7 @@ export function DetailClient({ slug }: Props) {
               {accountInfo?.valid && (
                 <div className="flex items-center gap-2 mt-2 p-2.5 rounded-xl text-[11.5px]"
                   style={{ background:'color-mix(in oklab, var(--success) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--success) 25%, var(--line))' }}>
-                  <span style={{ color:'var(--success)' }}>✓</span> Verified: <b>{accountInfo.displayName}</b>
+                  <span style={{ color:'var(--success)' }}>✓</span> {t('verified')} <b>{accountInfo.displayName}</b>
                 </div>
               )}
             </div>
@@ -424,14 +426,14 @@ export function DetailClient({ slug }: Props) {
           {method==='code' && (
             <div className="flex items-start gap-2 p-3 rounded-xl text-[11.5px]"
               style={{ background:'color-mix(in oklab, var(--brand) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--brand) 25%, var(--line))' }}>
-              ℹ Redeem code delivered after payment.
+              {t('codeDeliveryNotice')}
             </div>
           )}
 
           {/* Package grid — 3 columns, compact */}
           <div>
             <div className="flex items-center justify-between mb-2.5">
-              <h3 className="font-sora font-bold text-[14px] m-0">Choose {product.currencyLabel}</h3>
+              <h3 className="font-sora font-bold text-[14px] m-0">{t('choose')} {product.currencyLabel}</h3>
               {discPct>0&&<span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold" style={{ background:'#dcfce7', color:'#15803d' }}>{discPct}% OFF</span>}
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -455,9 +457,9 @@ export function DetailClient({ slug }: Props) {
         <button
           disabled={!ready||payMut.isPending}
           onClick={()=>payMut.mutate()}
-          className="flex-1 max-w-[200px] h-12 rounded-xl font-semibold text-[13.5px] flex items-center justify-center gap-1.5 transition-all"
+          className={`flex-1 max-w-[200px] h-12 rounded-xl font-semibold text-[13.5px] flex items-center justify-center gap-1.5 transition-all${payMut.isPending?' btn-busy':''}`}
           style={{ background:ready?'var(--brand)':'var(--surface-2)', color:ready?'#fff':'var(--muted-2)', border:0, boxShadow:ready?'0 8px 20px -4px color-mix(in oklab, var(--brand) 40%, transparent)':'none' }}>
-          {payMut.isPending?'⏳ Processing…':payMethod==='khqr'?'⬛ Pay with KHQR':payMethod==='bank'?'🏦 Pay with Bank':'🔒 Pay now'}
+          {payMut.isPending?t('processing'):payMethod==='khqr'?t('payWithKhqr'):payMethod==='bank'?t('payWithBank'):t('payNow')}
         </button>
       </div>
     </div>
@@ -510,9 +512,9 @@ export function DetailClient({ slug }: Props) {
                     style={{ background:method===m?'var(--brand)':undefined, borderColor:method===m?'var(--brand)':'var(--line-strong)', color:method===m?'#fff':undefined }}>
                     {method===m?'✓':''}
                   </span>
-                  <h4 className="font-sora text-[13.5px] font-bold m-0 mb-1">{m==='direct'?'Direct top-up':'Get a code'}</h4>
+                  <h4 className="font-sora text-[13.5px] font-bold m-0 mb-1">{m==='direct'?t('directTopup'):t('getACode')}</h4>
                   <p className="text-[11.5px] m-0" style={{ color:'var(--muted)' }}>
-                    {m==='direct'?'Diamonds sent directly to your account.':'Redeem code delivered after payment.'}
+                    {m==='direct'?t('diamondsDirectInfo'):t('codeDeliveryInfo')}
                   </p>
                 </button>
               );
@@ -524,7 +526,7 @@ export function DetailClient({ slug }: Props) {
             <div className="mb-5">
               <div className="grid gap-3" style={{ gridTemplateColumns:'1fr 130px' }}>
                 <div>
-                  <label className="block text-[12px] font-medium mb-1.5" style={{ color:'var(--ink-2)' }}>Game User ID</label>
+                  <label className="block text-[12px] font-medium mb-1.5" style={{ color:'var(--ink-2)' }}>{t('gameUserId')}</label>
                   <div className="relative">
                     <input className="w-full h-11 px-3.5 rounded-xl border outline-none text-[14px]"
                       style={{ background:'var(--surface)', borderColor:gameUserId&&gameUserId.length<6?'var(--danger)':'var(--line)', color:'var(--ink)' }}
@@ -532,10 +534,10 @@ export function DetailClient({ slug }: Props) {
                       onChange={e=>setGameUserId(e.target.value.replace(/\D/g,''))}/>
                     {gameUserId.length>=6&&<span className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color:'var(--success)' }}>✓</span>}
                   </div>
-                  <span className="text-[11px] mt-1 block" style={{ color:'var(--muted)' }}>Profile → User ID inside the game</span>
+                  <span className="text-[11px] mt-1 block" style={{ color:'var(--muted)' }}>{t('gameUserIdHint')}</span>
                 </div>
                 <div>
-                  <label className="block text-[12px] font-medium mb-1.5" style={{ color:'var(--ink-2)' }}>Zone ID</label>
+                  <label className="block text-[12px] font-medium mb-1.5" style={{ color:'var(--ink-2)' }}>{t('zoneIdLabel')}</label>
                   <div className="relative">
                     <input className="w-full h-11 px-3.5 rounded-xl border outline-none text-[14px]"
                       style={{ background:'var(--surface)', borderColor:'var(--line)', color:'var(--ink)' }}
@@ -548,7 +550,7 @@ export function DetailClient({ slug }: Props) {
               {accountInfo?.valid&&(
                 <div className="flex items-center gap-2 mt-2.5 p-3 rounded-xl text-[12.5px]"
                   style={{ background:'color-mix(in oklab, var(--success) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--success) 30%, var(--line))' }}>
-                  <span style={{ color:'var(--success)' }}>✓</span> Verified: <b>{accountInfo.displayName}</b> — {product.title}, Zone {zoneId}
+                  <span style={{ color:'var(--success)' }}>✓</span> {t('verified')} <b>{accountInfo.displayName}</b> — {product.title}, {t('zoneLabel')} {zoneId}
                 </div>
               )}
             </div>
@@ -562,7 +564,7 @@ export function DetailClient({ slug }: Props) {
 
           {/* Package grid — 4-col compact diamond cards */}
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-sora font-bold text-[16px] m-0">Choose {product.currencyLabel}</h3>
+            <h3 className="font-sora font-bold text-[16px] m-0">{t('choose')} {product.currencyLabel}</h3>
             {discPct>0&&<span className="px-2.5 py-1 rounded-full text-[12px] font-bold" style={{ background:'#dcfce7', color:'#15803d' }}>🏷 {discPct}% OFF all</span>}
           </div>
           <div className="grid gap-2.5" style={{ gridTemplateColumns:'repeat(auto-fill, minmax(110px, 1fr))' }}>
@@ -580,8 +582,8 @@ export function DetailClient({ slug }: Props) {
             {[
               ['Game',         product.title],
               ['Currency',     product.currencyLabel],
-              ['Method',       method==='direct'?'Direct top-up':'Voucher code'],
-              ...(method==='direct'&&gameUserId?[['Account',`${gameUserId} · Zone ${zoneId||'—'}`]]:[] as any),
+              [t('method'),     method==='direct'?t('directTopup'):t('voucherCode')],
+              ...(method==='direct'&&gameUserId?[[t('account'),`${gameUserId} · ${t('zoneLabel')} ${zoneId||'—'}`]]:[] as any),
               ['Package',      pkg?`${pkg.amount.toLocaleString()}${pkg.bonus?` +${pkg.bonus}`:''} ${product.currencyLabel}`:'—'],
               ...(discount>0?[['Discount',`-$${discount.toFixed(2)}`]]:[] as any),
               ['Service fee',  `$${fee.toFixed(2)}`],
@@ -606,13 +608,13 @@ export function DetailClient({ slug }: Props) {
             <button
               disabled={!ready||payMut.isPending}
               onClick={()=>payMut.mutate()}
-              className="w-full h-12 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 mt-4 transition-all"
+              className={`w-full h-12 rounded-xl font-semibold text-[14.5px] flex items-center justify-center gap-2 mt-4 transition-all${payMut.isPending?' btn-busy':''}`}
               style={{ background:ready?'var(--brand)':'var(--surface-2)', color:ready?'#fff':'var(--muted-2)', border:0, boxShadow:ready?'0 8px 20px -4px color-mix(in oklab, var(--brand) 40%, transparent)':'none' }}>
-              {payMut.isPending?'⏳ Processing…':payMethod==='khqr'?'⬛ Pay with KHQR':payMethod==='bank'?`🏦 Pay with ${BANKS.find(b=>b.id===selBank)?.name}`:`🔒 Pay $${ready?total.toFixed(2):'—'}`}
+              {payMut.isPending?t('processing'):payMethod==='khqr'?t('payWithKhqr'):payMethod==='bank'?`${t('continueToBank')} ${BANKS.find(b=>b.id===selBank)?.name}`:`${t('payWithCard')} $${ready?total.toFixed(2):'—'}`}
             </button>
             <div className="flex items-center gap-2 mt-3 p-2.5 rounded-xl text-[11px]"
               style={{ background:'var(--surface-2)', color:'var(--muted)' }}>
-              🛡 SSL · PCI-DSS · Money-back guarantee
+              {t('safeBadge')}
             </div>
           </div>
         </aside>

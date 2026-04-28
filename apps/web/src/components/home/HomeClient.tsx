@@ -8,9 +8,11 @@ import { MobileLayout } from '@/components/layout/MobileLayout';
 import { CategoryChips } from './CategoryChips';
 import { GameGrid } from './GameGrid';
 import { HeroCard } from './HeroCard';
+import { useT } from '@/lib/i18n';
 
 export function HomeClient() {
   const router        = useRouter();
+  const t             = useT();
   const [query,    setQuery]    = useState('');
   const [debounced, setDebounced] = useState('');
   const [cat,      setCat]      = useState('all');
@@ -51,14 +53,14 @@ export function HomeClient() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-sora font-bold text-lg">
                 {cat === 'all'
-                  ? (debounced ? `Results for "${debounced}"` : 'Trending now')
+                  ? (debounced ? `${t('resultsFor')} "${debounced}"` : t('trendingNow'))
                   : categories.find((c: any) => c.slug === cat)?.label}
               </h3>
-              <span className="text-[12.5px]" style={{ color: 'var(--muted)' }}>{products.length} items</span>
+              <span className="text-[12.5px]" style={{ color: 'var(--muted)' }}>{products.length} {t('itemsCount')}</span>
             </div>
             {products.length === 0 ? (
               <div className="py-16 text-center" style={{ color: 'var(--muted)' }}>
-                No matches{debounced ? ` for "${debounced}"` : ''}.
+                {t('noMatches')}{debounced ? ` for "${debounced}"` : ''}.
               </div>
             ) : (
               <GameGrid products={products} onSelect={goDetail} />

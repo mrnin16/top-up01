@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { api } from '@/lib/api';
 import { TopNav } from '@/components/layout/TopNav';
-
-const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  PENDING:    { bg: 'var(--surface-2)', color: 'var(--muted)',  label: 'Pending'    },
-  PAID:       { bg: '#e7eeff',          color: 'var(--brand)',  label: 'Paid'       },
-  DELIVERING: { bg: '#fff7ed',          color: '#c2410c',       label: 'Delivering' },
-  DELIVERED:  { bg: '#dcfce7',          color: '#15803d',       label: 'Delivered'  },
-  FAILED:     { bg: '#fee2e2',          color: 'var(--danger)', label: 'Failed'     },
-  REFUNDED:   { bg: 'var(--surface-2)', color: 'var(--muted)',  label: 'Refunded'   },
-};
+import { useT } from '@/lib/i18n';
 
 export default function OrdersPage() {
   const router = useRouter();
   const user   = useStore(s => s.user);
+  const t      = useT();
+
+  const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
+    PENDING:    { bg: 'var(--surface-2)', color: 'var(--muted)',  label: t('awaitingPayment') },
+    PAID:       { bg: '#e7eeff',          color: 'var(--brand)',  label: t('paid')            },
+    DELIVERING: { bg: '#fff7ed',          color: '#c2410c',       label: t('delivering')      },
+    DELIVERED:  { bg: '#dcfce7',          color: '#15803d',       label: t('delivered')       },
+    FAILED:     { bg: '#fee2e2',          color: 'var(--danger)', label: t('failed')          },
+    REFUNDED:   { bg: 'var(--surface-2)', color: 'var(--muted)',  label: t('refunded')        },
+  };
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['my-orders'],
@@ -29,7 +31,7 @@ export default function OrdersPage() {
     return (
       <div className="min-h-screen grid place-items-center" style={{ background: 'var(--bg)' }}>
         <p style={{ color: 'var(--muted)' }}>
-          Please <Link href="/auth/login?next=/account/orders" style={{ color: 'var(--brand)' }}>sign in</Link> to view orders.
+          {t('please')} <Link href="/auth/login?next=/account/orders" style={{ color: 'var(--brand)' }}>{t('signIn').toLowerCase()}</Link> {t('toViewOrders')}
         </p>
       </div>
     );
@@ -46,7 +48,7 @@ export default function OrdersPage() {
           <button onClick={() => router.back()}
             className="w-9 h-9 rounded-xl border grid place-items-center text-lg"
             style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>←</button>
-          <h1 className="font-sora font-bold text-xl m-0">Order history</h1>
+          <h1 className="font-sora font-bold text-xl m-0">{t('orderHistory')}</h1>
         </div>
 
         {isLoading ? (
@@ -59,12 +61,12 @@ export default function OrdersPage() {
           <div className="text-center py-16 rounded-[22px] border"
             style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>
             <span className="text-5xl block mb-4">🧾</span>
-            <h3 className="font-sora font-bold text-lg m-0 mb-2">No orders yet</h3>
+            <h3 className="font-sora font-bold text-lg m-0 mb-2">{t('noOrdersYet')}</h3>
             <p className="text-sm mb-4 max-w-xs mx-auto" style={{ color: 'var(--muted)' }}>
-              Top up a game or service to get started.
+              {t('topUpToGetStarted')}
             </p>
             <Link href="/" className="inline-block px-4 py-2 rounded-xl text-sm font-semibold no-underline"
-              style={{ background: 'var(--brand)', color: '#fff' }}>Browse catalog</Link>
+              style={{ background: 'var(--brand)', color: '#fff' }}>{t('browseCatalog')}</Link>
           </div>
         ) : (
           <div className="flex flex-col gap-3">

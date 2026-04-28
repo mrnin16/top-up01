@@ -1,6 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
+import { LanguageToggle } from './LanguageToggle';
+import { useT } from '@/lib/i18n';
 
 interface Props {
   query: string;
@@ -10,6 +12,7 @@ interface Props {
 
 export function TopNav({ query, onSearch, activeRoute }: Props) {
   const user = useStore(s => s.user);
+  const t = useT();
 
   return (
     <nav
@@ -29,7 +32,7 @@ export function TopNav({ query, onSearch, activeRoute }: Props) {
 
       {/* Nav links */}
       <div className="flex gap-1 ml-2">
-        {[['/', 'Browse'], ['/promotions', 'Promotions'], ['/help', 'Help']].map(([href, label]) => (
+        {[['/', t('browse')], ['/promotions', t('promotions')], ['/help', t('help')]].map(([href, label]) => (
           <Link
             key={href}
             href={href}
@@ -50,7 +53,7 @@ export function TopNav({ query, onSearch, activeRoute }: Props) {
         <input
           className="w-full h-10 pl-10 pr-4 rounded-xl border text-[13.5px] outline-none transition-all"
           style={{ background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--ink)' }}
-          placeholder="Search games, subscriptions, gift cards…"
+          placeholder={t('searchPlaceholderDesktop')}
           value={query}
           onChange={e => onSearch(e.target.value)}
         />
@@ -58,12 +61,7 @@ export function TopNav({ query, onSearch, activeRoute }: Props) {
 
       {/* Icons */}
       <div className="flex items-center gap-1.5 ml-auto">
-        <button
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[12px] font-medium"
-          style={{ borderColor: 'var(--line)', background: 'var(--surface)', color: 'var(--ink-2)' }}
-        >
-          🌐 EN
-        </button>
+        <LanguageToggle variant="pill" />
 
         <button
           className="relative w-[38px] h-[38px] rounded-xl border grid place-items-center"
@@ -84,7 +82,7 @@ export function TopNav({ query, onSearch, activeRoute }: Props) {
               <Link href="/admin"
                 className="px-2.5 py-1.5 rounded-lg text-[11.5px] font-semibold no-underline"
                 style={{ background: 'var(--accent)', color: '#fff' }}>
-                ⚙️ Admin
+                {t('admin')}
               </Link>
             )}
             <Link
@@ -107,7 +105,7 @@ export function TopNav({ query, onSearch, activeRoute }: Props) {
             className="px-4 py-2 rounded-xl text-[13px] font-semibold no-underline"
             style={{ background: 'var(--brand)', color: '#fff' }}
           >
-            Sign in
+            {t('signIn')}
           </Link>
         )}
       </div>

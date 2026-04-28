@@ -67,6 +67,55 @@ input, select, textarea { font-family: inherit; color: inherit; }
 
 @keyframes pulse  { 50% { transform: scale(1.5); opacity: .4; } }
 @keyframes ring   { from { transform: scale(.7); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+@keyframes spin   { to { transform: rotate(360deg); } }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   GLOBAL — every selected / active / checked element uses the brand color.
+   Works across all themes (default, anime, liquid). Inline borderColor on
+   non-pressed elements is unaffected.
+   ────────────────────────────────────────────────────────────────────────── */
+button[aria-pressed="true"]:not([disabled]),
+button[aria-checked="true"]:not([disabled]),
+[role="button"][aria-pressed="true"]:not([disabled]),
+[role="radio"][aria-checked="true"]:not([disabled]) {
+  border-color: var(--brand);
+}
+
+/* ── Tap-bounce — consistent press feedback on any clickable element ── */
+.tap-bounce {
+  transition: transform .12s cubic-bezier(.34, 1.56, .64, 1), filter .12s ease;
+}
+.tap-bounce:active:not(:disabled) {
+  transform: scale(0.94);
+  filter: brightness(0.95);
+}
+.tap-bounce-sm {
+  transition: transform .12s cubic-bezier(.34, 1.56, .64, 1), filter .12s ease;
+}
+.tap-bounce-sm:active:not(:disabled) {
+  transform: scale(0.97);
+  filter: brightness(0.96);
+}
+
+/* ── Busy / processing button state — keeps the same style, just shows progress ── */
+.btn-busy {
+  cursor: progress !important;
+  pointer-events: none;
+}
+/* Smooth circular spinner — replaces the static ⏳, inherits button color so it matches every theme */
+.btn-busy::before {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: -3px;
+  opacity: 0.9;
+}
 
 /* ════════════════════════════════════════════════════════════════════════════
    ✨ LIQUID GLASS — iOS 26-style refined frosted glass UI
@@ -237,7 +286,9 @@ input, select, textarea { font-family: inherit; color: inherit; }
    ════════════════════════════════════════════════════════════════════════════ */
 
 [data-ui-mode="liquid"] button:not([disabled]),
-[data-ui-mode="liquid"] [role="button"]:not([disabled]) {
+[data-ui-mode="liquid"] button.btn-busy,
+[data-ui-mode="liquid"] [role="button"]:not([disabled]),
+[data-ui-mode="liquid"] [role="button"].btn-busy {
   position: relative;
   backdrop-filter: blur(10px) saturate(160%);
   -webkit-backdrop-filter: blur(10px) saturate(160%);
@@ -256,9 +307,11 @@ input, select, textarea { font-family: inherit; color: inherit; }
   filter: brightness(0.96);
 }
 
-/* Specular shine on solid-color buttons (CTA, brand-colored) */
-[data-ui-mode="liquid"] button[style*="var(--brand)"]:not([disabled])::before,
-[data-ui-mode="liquid"] .cta:not([disabled])::before {
+/* Specular shine on solid-color buttons (CTA, brand-colored) — keep on busy too */
+[data-ui-mode="liquid"] button[style*="var(--brand)"]:not([disabled])::after,
+[data-ui-mode="liquid"] button[style*="var(--brand)"].btn-busy::after,
+[data-ui-mode="liquid"] .cta:not([disabled])::after,
+[data-ui-mode="liquid"] .cta.btn-busy::after {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; height: 50%;
@@ -1071,8 +1124,11 @@ input, select, textarea { font-family: inherit; color: inherit; }
    🔘 BUTTONS — chunky physical press-down (Y-offset only, no blur)
    ════════════════════════════════════════════════════════════════════════════ */
 
-[data-ui-mode="anime"] button:not([disabled]) {
-  border: 2px solid var(--line) !important;
+[data-ui-mode="anime"] button:not([disabled]),
+[data-ui-mode="anime"] button.btn-busy {
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--line);
   box-shadow: var(--press-shadow) !important;
   font-weight: 700 !important;
   letter-spacing: 0.02em;
@@ -1081,6 +1137,12 @@ input, select, textarea { font-family: inherit; color: inherit; }
               filter var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
               background-color var(--dur-fast) var(--ease-out) !important;
+}
+
+/* Selected / active buttons — themed brand border (pink in anime, blue in default) */
+[data-ui-mode="anime"] button[aria-pressed="true"]:not([disabled]),
+[data-ui-mode="anime"] button[aria-checked="true"]:not([disabled]) {
+  border-color: var(--brand) !important;
 }
 
 [data-ui-mode="anime"] button:not([disabled]):hover {
@@ -1095,8 +1157,9 @@ input, select, textarea { font-family: inherit; color: inherit; }
   transition-duration: 80ms;
 }
 
-/* Brand-coloured CTAs — chunky sakura pink, white ink */
+/* Brand-coloured CTAs — chunky sakura pink, white ink (keep on busy too) */
 [data-ui-mode="anime"] button[style*="var(--brand)"]:not([disabled]),
+[data-ui-mode="anime"] button[style*="var(--brand)"].btn-busy,
 [data-ui-mode="anime"] .cta {
   background: linear-gradient(180deg, #ff85b4 0%, #ff5e9c 100%) !important;
   color: var(--brand-ink) !important;

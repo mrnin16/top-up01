@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { TRANSLATIONS } from '@/lib/translations';
 
 export default function AdminSettingsPage() {
   const qc = useQueryClient();
@@ -310,6 +311,45 @@ export default function AdminSettingsPage() {
         </div>
       </section>
 
+      {/* ── Text Display (Multilingual) ───────────────────────────────────── */}
+      <section className="p-5 rounded-2xl border mb-4"
+        style={{ background: 'var(--surface)', borderColor: 'var(--line)', boxShadow: 'var(--shadow-sm)' }}>
+        <h2 className="font-sora font-bold text-[16px] mb-1 m-0">Text Display</h2>
+        <p className="text-[12.5px] mb-4 mt-0" style={{ color: 'var(--muted)' }}>
+          Customize labels in English and Khmer. Bundled defaults are shown as placeholders — leave empty to keep them.
+        </p>
+
+        <div className="flex flex-col gap-4">
+          {Object.entries(TRANSLATIONS).map(([key, defaults]) => (
+            <div key={key} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="sm:col-span-2 text-[12px] font-medium" style={{ color: 'var(--ink-2)' }}>
+                {key} <span className="font-normal" style={{ color: 'var(--muted)' }}>· admin override</span>
+              </div>
+              <div>
+                <label className="block text-[10.5px] mb-1" style={{ color: 'var(--muted)' }}>🇬🇧 English</label>
+                <input
+                  className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
+                  style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}
+                  placeholder={defaults.en}
+                  value={field(`text.${key}.en`)}
+                  onChange={e => set(`text.${key}.en`, e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10.5px] mb-1" style={{ color: 'var(--muted)' }}>🇰🇭 ខ្មែរ</label>
+                <input
+                  className="w-full h-10 px-3 rounded-xl border outline-none text-[13px]"
+                  style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}
+                  placeholder={defaults.km}
+                  value={field(`text.${key}.km`)}
+                  onChange={e => set(`text.${key}.km`, e.target.value)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Save button + status ───────────────────────────────────────────── */}
       {saveMsg && (
         <div className="mb-3 p-3 rounded-xl text-[13px] font-medium"
@@ -336,14 +376,14 @@ export default function AdminSettingsPage() {
       <button
         onClick={() => saveMut.mutate()}
         disabled={isBusy}
-        className="w-full h-12 rounded-xl font-semibold text-[14px] transition-all"
+        className={`w-full h-12 rounded-xl font-semibold text-[14px] transition-all${isBusy?' btn-busy':''}`}
         style={{
-          background: isBusy ? 'var(--surface-2)' : 'var(--brand)',
-          color:      isBusy ? 'var(--muted-2)'   : '#fff',
+          background: 'var(--brand)',
+          color:      '#fff',
           boxShadow:  isBusy ? 'none' : '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)',
         }}>
-        {saveMut.isPending ? '⏳ Saving…'
-         : uploadStatus === 'uploading' ? '⏳ Wait for upload…'
+        {saveMut.isPending ? 'Saving…'
+         : uploadStatus === 'uploading' ? 'Wait for upload…'
          : '💾 Save all settings'}
       </button>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { useT } from '@/lib/i18n';
 
 interface Props {
   merchantImageUrl?: string | null;  // admin-uploaded KHQR (preferred)
@@ -21,6 +22,7 @@ export function KhqrPanel({
   total,
   onSimulate,
 }: Props) {
+  const t = useT();
   const [shared,      setShared]      = useState(false);
   const [imageError,  setImageError]  = useState(false);
 
@@ -84,7 +86,7 @@ export function KhqrPanel({
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full" style={{ background: 'var(--success)', animation: 'pulse 1.4s infinite' }} />
           <span className="text-[13px] font-semibold">
-            {showUploadedImage ? 'Scan to pay' : `Expires ${fmtTimer}`}
+            {showUploadedImage ? t('scanToPay') : `${t('expires')} ${fmtTimer}`}
           </span>
           {merchantName && (
             <span className="text-[12px]" style={{ color: 'var(--muted)' }}>· {merchantName}</span>
@@ -131,7 +133,7 @@ export function KhqrPanel({
         {/* ── Instructions + actions ── */}
         <div className="flex-1 text-center sm:text-left">
           <h4 className="font-sora font-bold text-[15px] mb-1.5">
-            {showUploadedImage ? 'Open your banking app and scan' : 'Scan with any KHQR app'}
+            {showUploadedImage ? t('openBankingScan') : t('scanKhqrApp')}
           </h4>
           <p className="text-[12px] mb-4" style={{ color: 'var(--muted)' }}>
             ABA · ACLEDA · Wing · Chip Mong · TrueMoney &amp; more
@@ -146,7 +148,7 @@ export function KhqrPanel({
                 onClick={handleShare}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-medium transition-all hover:opacity-80"
                 style={{ background: 'var(--brand)', borderColor: 'var(--brand)', color: '#fff' }}>
-                {shared ? '✓ Shared!' : '↗ Share QR'}
+                {shared ? t('shared') : t('shareQr')}
               </button>
             )}
 
@@ -156,7 +158,7 @@ export function KhqrPanel({
                 onClick={handleSave}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-medium transition-all hover:opacity-80"
                 style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--ink)' }}>
-                ⬇ Save image
+                {t('saveImageLong')}
               </button>
             )}
 
@@ -164,16 +166,16 @@ export function KhqrPanel({
             <button
               onClick={onSimulate}
               disabled={scanning}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-medium transition-all hover:opacity-80"
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-[12px] font-medium transition-all hover:opacity-80${scanning?' btn-busy':''}`}
               style={{ background: 'var(--surface-2)', borderColor: 'var(--line)', color: 'var(--muted)' }}>
-              {scanning ? '⏳ Waiting…' : '🧪 Simulate scan'}
+              {scanning ? t('waiting') : t('simulateScan')}
             </button>
           </div>
 
           {/* Amount reminder */}
           <div className="mt-4 p-3 rounded-xl text-[12px]"
             style={{ background: 'color-mix(in oklab, var(--brand) 7%, var(--surface))', border: '1px solid color-mix(in oklab, var(--brand) 20%, var(--line))' }}>
-            💡 Enter <b>${total.toFixed(2)} USD</b> as the transfer amount in your banking app.
+            {t('enterLabel')} <b>${total.toFixed(2)} {t('transferAmountHint')}</b>
           </div>
         </div>
       </div>

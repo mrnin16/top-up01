@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api, setAccessToken, setRefreshToken } from '@/lib/api';
 import { useStore } from '@/lib/store';
+import { useT } from '@/lib/i18n';
 
 function RegisterForm() {
   const router  = useRouter();
   const params  = useSearchParams();
   const next    = params.get('next') || '/';
   const setAuth = useStore(s => s.setAuth);
+  const t       = useT();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [err,  setErr]  = useState('');
 
@@ -40,15 +42,15 @@ function RegisterForm() {
             style={{ background: 'linear-gradient(135deg, var(--brand), color-mix(in oklab, var(--brand) 50%, #000))', color: '#fff' }}>
             💎
           </Link>
-          <h1 className="font-sora text-[22px] font-bold m-0">Create account</h1>
-          <p className="mt-1 text-[13px]" style={{ color: 'var(--muted)' }}>Start topping up in 30 seconds</p>
+          <h1 className="font-sora text-[22px] font-bold m-0">{t('createAccount')}</h1>
+          <p className="mt-1 text-[13px]" style={{ color: 'var(--muted)' }}>{t('registerSubtitle')}</p>
         </div>
 
         <div className="flex flex-col gap-3">
           {[
-            { key: 'name',     label: 'Full name', type: 'text',     placeholder: 'Lina Sok',         autoComplete: 'name'        },
-            { key: 'email',    label: 'Email',     type: 'email',    placeholder: 'you@example.com',  autoComplete: 'email'       },
-            { key: 'password', label: 'Password',  type: 'password', placeholder: '8+ characters',     autoComplete: 'new-password' },
+            { key: 'name',     label: t('fullName'),  type: 'text',     placeholder: 'Lina Sok',        autoComplete: 'name'         },
+            { key: 'email',    label: t('email'),     type: 'email',    placeholder: 'you@example.com', autoComplete: 'email'        },
+            { key: 'password', label: t('password'),  type: 'password', placeholder: t('passwordHint'), autoComplete: 'new-password' },
           ].map(f => (
             <div key={f.key}>
               <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--ink-2)' }}>{f.label}</label>
@@ -72,20 +74,20 @@ function RegisterForm() {
           <button
             onClick={() => register.mutate()}
             disabled={register.isPending || !valid}
-            className="w-full h-11 rounded-xl font-semibold text-[14px] mt-1 transition-all"
+            className={`w-full h-11 rounded-xl font-semibold text-[14px] mt-1 transition-all${register.isPending?' btn-busy':''}`}
             style={{
-              background: !valid || register.isPending ? 'var(--surface-2)' : 'var(--brand)',
-              color:      !valid || register.isPending ? 'var(--muted-2)'    : '#fff',
+              background: !valid && !register.isPending ? 'var(--surface-2)' : 'var(--brand)',
+              color:      !valid && !register.isPending ? 'var(--muted-2)'    : '#fff',
               boxShadow:  '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)',
             }}>
-            {register.isPending ? 'Creating…' : 'Create account'}
+            {register.isPending ? t('creating') : t('createAccount')}
           </button>
         </div>
 
         <div className="mt-5 pt-4 text-center text-[13px]" style={{ borderTop: '1px dashed var(--line)', color: 'var(--muted)' }}>
-          Have an account?{' '}
+          {t('alreadyHaveAccount')}{' '}
           <Link href={`/auth/login${next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`} className="font-semibold no-underline" style={{ color: 'var(--brand)' }}>
-            Sign in
+            {t('signIn')}
           </Link>
         </div>
       </div>

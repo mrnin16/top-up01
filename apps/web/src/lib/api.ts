@@ -73,9 +73,9 @@ async function toError(res: Response) {
 
 // ── Typed surface ───────────────────────────────────────────────────────────
 export const api = {
-  // Platform public settings (KHQR image, merchant info, UI mode — no auth)
+  // Platform public settings (KHQR image, merchant info, UI mode, multilingual text — no auth)
   publicSettings: () =>
-    request<{
+    request<Record<string, string> & {
       khqrImageUrl?:     string;
       khqrMerchantName?: string;
       khqrMerchantId?:   string;

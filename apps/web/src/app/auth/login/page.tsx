@@ -5,12 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api, setAccessToken, setRefreshToken } from '@/lib/api';
 import { useStore } from '@/lib/store';
+import { useT } from '@/lib/i18n';
 
 function LoginForm() {
   const router  = useRouter();
   const params  = useSearchParams();
   const next    = params.get('next') || '/';
   const setAuth = useStore(s => s.setAuth);
+  const t       = useT();
   const [form, setForm] = useState({ emailOrPhone: '', password: '' });
   const [err,  setErr]  = useState('');
 
@@ -38,13 +40,13 @@ function LoginForm() {
             style={{ background: 'linear-gradient(135deg, var(--brand), color-mix(in oklab, var(--brand) 50%, #000))', color: '#fff' }}>
             💎
           </Link>
-          <h1 className="font-sora text-[22px] font-bold m-0">Welcome back</h1>
-          <p className="mt-1 text-[13px]" style={{ color: 'var(--muted)' }}>Sign in to your Top-up account</p>
+          <h1 className="font-sora text-[22px] font-bold m-0">{t('signIn')}</h1>
+          <p className="mt-1 text-[13px]" style={{ color: 'var(--muted)' }}>{t('signInToAccount')}</p>
         </div>
 
         <div className="flex flex-col gap-3">
           <div>
-            <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--ink-2)' }}>Email or phone</label>
+            <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--ink-2)' }}>{t('emailOrPhone')}</label>
             <input
               autoFocus autoComplete="email"
               className="w-full h-11 px-3.5 rounded-xl border outline-none text-[14px] transition-all"
@@ -55,7 +57,7 @@ function LoginForm() {
             />
           </div>
           <div>
-            <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--ink-2)' }}>Password</label>
+            <label className="block text-[12px] font-medium mb-1.5" style={{ color: 'var(--ink-2)' }}>{t('password')}</label>
             <input
               type="password" autoComplete="current-password"
               className="w-full h-11 px-3.5 rounded-xl border outline-none text-[14px]"
@@ -75,20 +77,20 @@ function LoginForm() {
           <button
             onClick={() => login.mutate()}
             disabled={login.isPending || !form.emailOrPhone || !form.password}
-            className="w-full h-11 rounded-xl font-semibold text-[14px] mt-1 transition-all"
+            className={`w-full h-11 rounded-xl font-semibold text-[14px] mt-1 transition-all${login.isPending?' btn-busy':''}`}
             style={{
-              background: login.isPending || !form.emailOrPhone || !form.password ? 'var(--surface-2)' : 'var(--brand)',
-              color:      login.isPending || !form.emailOrPhone || !form.password ? 'var(--muted-2)' : '#fff',
+              background: (!form.emailOrPhone || !form.password) && !login.isPending ? 'var(--surface-2)' : 'var(--brand)',
+              color:      (!form.emailOrPhone || !form.password) && !login.isPending ? 'var(--muted-2)' : '#fff',
               boxShadow:  '0 8px 16px -4px color-mix(in oklab, var(--brand) 35%, transparent)',
             }}>
-            {login.isPending ? 'Signing in…' : 'Sign in'}
+            {login.isPending ? t('signingIn') : t('signIn')}
           </button>
         </div>
 
         <div className="mt-5 pt-4 text-center text-[13px]" style={{ borderTop: '1px dashed var(--line)', color: 'var(--muted)' }}>
-          No account?{' '}
+          {t('noAccountYet')}{' '}
           <Link href={`/auth/register${next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`} className="font-semibold no-underline" style={{ color: 'var(--brand)' }}>
-            Create one
+            {t('createAccount')}
           </Link>
         </div>
 

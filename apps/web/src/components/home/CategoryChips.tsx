@@ -1,4 +1,6 @@
 'use client';
+import { useT } from '@/lib/i18n';
+
 interface Props {
   categories: any[];
   active: string;
@@ -10,7 +12,8 @@ const ICON: Record<string, string> = {
 };
 
 export function CategoryChips({ categories, active, onChange }: Props) {
-  const all = [{ slug: 'all', label: 'All', icon: 'all' }, ...categories];
+  const t = useT();
+  const all = [{ slug: 'all', label: t('categoryAll'), icon: 'all' }, ...categories];
   return (
     <div className="flex flex-wrap gap-2">
       {all.map((c: any) => (
@@ -18,11 +21,11 @@ export function CategoryChips({ categories, active, onChange }: Props) {
           key={c.slug}
           aria-pressed={active === c.slug}
           onClick={() => onChange(c.slug)}
-          className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full border text-[13px] font-medium transition-all duration-150"
+          className="tap-bounce inline-flex items-center gap-2 px-3.5 py-2.5 rounded-full border text-[13px] font-medium transition-all duration-150"
           style={{
-            background:   active === c.slug ? 'var(--ink)'     : 'var(--surface)',
-            color:        active === c.slug ? 'var(--surface)'  : 'var(--ink-2)',
-            borderColor:  active === c.slug ? 'var(--ink)'     : 'var(--line)',
+            background:   active === c.slug ? 'var(--brand)'     : 'var(--surface)',
+            color:        active === c.slug ? 'var(--brand-ink)' : 'var(--ink-2)',
+            borderColor:  active === c.slug ? 'var(--brand)'     : 'var(--line)',
           }}
         >
           <span style={{ fontSize: 12 }}>{ICON[c.icon] ?? '●'}</span>

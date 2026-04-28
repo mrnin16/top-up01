@@ -4,9 +4,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useStore } from '@/lib/store';
 import { TopNav } from '@/components/layout/TopNav';
+import { useT } from '@/lib/i18n';
 
 export default function AccountPage() {
   const router    = useRouter();
+  const t         = useT();
   const user      = useStore(s => s.user);
   const brandColor = useStore(s => s.brandColor);
   const dark       = useStore(s => s.dark);
@@ -33,9 +35,9 @@ export default function AccountPage() {
     return (
       <div className="min-h-screen grid place-items-center" style={{ background: 'var(--bg)' }}>
         <div className="text-center">
-          <p style={{ color: 'var(--muted)' }}>You're not signed in.</p>
+          <p style={{ color: 'var(--muted)' }}>{t('notSignedIn')}</p>
           <Link href="/auth/login" className="mt-3 inline-block px-4 py-2 rounded-xl text-sm font-semibold no-underline"
-            style={{ background: 'var(--brand)', color: '#fff' }}>Sign in</Link>
+            style={{ background: 'var(--brand)', color: '#fff' }}>{t('signIn')}</Link>
         </div>
       </div>
     );
@@ -66,8 +68,8 @@ export default function AccountPage() {
         {/* Quick links */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           {[
-            { href: '/account/orders',   icon: '🧾', label: 'Order history',  sub: 'View past top-ups' },
-            { href: '/account/saved-ids',icon: '🎮', label: 'Saved Game IDs', sub: 'Quick fill on checkout' },
+            { href: '/account/orders',   icon: '🧾', label: t('orderHistory'),  sub: t('viewPastTopups') },
+            { href: '/account/saved-ids',icon: '🎮', label: t('savedGameIds'),  sub: t('quickFillCheckout') },
           ].map(item => (
             <Link key={item.href} href={item.href}
               className="flex items-center gap-3 p-4 rounded-xl border no-underline transition-all hover:-translate-y-0.5"
@@ -84,13 +86,13 @@ export default function AccountPage() {
         {/* Appearance */}
         <div className="p-6 rounded-[22px] mb-6"
           style={{ background: 'var(--surface)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
-          <h3 className="font-sora font-bold text-[16px] m-0 mb-4">Appearance</h3>
+          <h3 className="font-sora font-bold text-[16px] m-0 mb-4">{t('appearance')}</h3>
 
           {/* Brand color */}
           <div className="flex items-center justify-between mb-4">
             <div>
-              <b className="text-[14px] font-semibold block">Brand color</b>
-              <span className="text-[12px]" style={{ color: 'var(--muted)' }}>Applies to buttons & accents</span>
+              <b className="text-[14px] font-semibold block">{t('brandColor')}</b>
+              <span className="text-[12px]" style={{ color: 'var(--muted)' }}>{t('brandColorHint')}</span>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -108,8 +110,8 @@ export default function AccountPage() {
           {/* Dark mode */}
           <div className="flex items-center justify-between">
             <div>
-              <b className="text-[14px] font-semibold block">Dark mode</b>
-              <span className="text-[12px]" style={{ color: 'var(--muted)' }}>Switch between light and dark</span>
+              <b className="text-[14px] font-semibold block">{t('darkMode')}</b>
+              <span className="text-[12px]" style={{ color: 'var(--muted)' }}>{t('darkModeHint')}</span>
             </div>
             <button
               role="switch"
@@ -127,7 +129,7 @@ export default function AccountPage() {
 
           {/* Quick presets */}
           <div className="mt-5 pt-4" style={{ borderTop: '1px dashed var(--line)' }}>
-            <span className="text-[11px] uppercase tracking-widest font-semibold" style={{ color: 'var(--muted)' }}>Quick presets</span>
+            <span className="text-[11px] uppercase tracking-widest font-semibold" style={{ color: 'var(--muted)' }}>{t('quickPresets')}</span>
             <div className="flex gap-2 mt-2.5 flex-wrap">
               {[
                 { label: '🎮 Gamer',    color: '#8b5cf6', dark: true  },
@@ -155,7 +157,7 @@ export default function AccountPage() {
           className="w-full h-11 rounded-xl font-semibold text-[14px] border transition-all"
           style={{ background: 'var(--surface)', borderColor: 'var(--line)', color: 'var(--danger)' }}
         >
-          Sign out
+          {t('signOut')}
         </button>
       </div>
     </div>
