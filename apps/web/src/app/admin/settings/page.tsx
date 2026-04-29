@@ -288,7 +288,7 @@ export default function AdminSettingsPage() {
         <div className="mt-5 pt-5" style={{ borderTop: '1px dashed var(--line)' }}>
           <h3 className="font-sora font-bold text-[14px] mb-1 m-0">Season effect</h3>
           <p className="text-[12px] mb-3 mt-0" style={{ color: 'var(--muted)' }}>
-            Floating ambient overlay shown across the platform (snow, rain, sakura, …).
+            Floating ambient overlay shown across the platform — each season also sets its own brand color for visual consistency.
           </p>
 
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -327,27 +327,6 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Default brand color */}
-        <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: '1px dashed var(--line)' }}>
-          <div>
-            <b className="text-[14px] font-semibold block">Default brand color</b>
-            <span className="text-[12px]" style={{ color: 'var(--muted)' }}>
-              Applied to all visitors who haven&apos;t customized their color
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={field('defaultBrandColor') || '#2563eb'}
-              onChange={e => set('defaultBrandColor', e.target.value)}
-              className="w-10 h-10 rounded-lg border cursor-pointer"
-              style={{ borderColor: 'var(--line)', padding: 2 }}
-            />
-            <span className="font-mono text-[12px]" style={{ color: 'var(--muted)' }}>
-              {field('defaultBrandColor') || '#2563eb'}
-            </span>
-          </div>
-        </div>
       </section>
 
       {/* ── Store ──────────────────────────────────────────────────────────── */}

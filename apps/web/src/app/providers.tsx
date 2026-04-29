@@ -23,9 +23,8 @@ function ThemeBootstrap() {
     queryFn:   api.publicSettings,
     staleTime: 60_000,
   });
-  const uiMode            = platform?.uiMode ?? 'default';
-  const seasonTheme       = platform?.seasonTheme ?? 'none';
-  const defaultBrandColor = platform?.defaultBrandColor;
+  const uiMode      = platform?.uiMode ?? 'default';
+  const seasonTheme = platform?.seasonTheme ?? 'none';
 
   // Sync persisted tokens
   useEffect(() => {
@@ -56,12 +55,22 @@ function ThemeBootstrap() {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   }, [dark]);
 
-  // Apply admin's default brand color for users who haven't customized theirs
+  // Each season carries its own default brand color so the whole platform stays
+  // visually consistent with the current ambient overlay. Users who explicitly
+  // picked a color keep theirs (brandColorCustomized=true).
   useEffect(() => {
-    if (defaultBrandColor && !brandColorCustomized) {
-      setBrand(defaultBrandColor, false); // false = don't mark as user-customized
-    }
-  }, [defaultBrandColor, brandColorCustomized, setBrand]);
+    if (brandColorCustomized) return;
+    const seasonBrand: Record<string, string> = {
+      none:   '#2563eb',
+      summer: '#f59e0b',
+      rain:   '#3b82f6',
+      snow:   '#60a5fa',
+      knyear: '#dc2626',
+      xmas:   '#16a34a',
+    };
+    const color = seasonBrand[seasonTheme] ?? seasonBrand.none;
+    setBrand(color, false); // false = don't mark as user-customized
+  }, [seasonTheme, brandColorCustomized, setBrand]);
 
   // Liquid Glass UI mode — applied platform-wide via attribute on <html>
   useEffect(() => {
