@@ -78,11 +78,13 @@ export class CatalogService {
 
       if (!res.ok) return { valid: false, displayName: null };
 
-      const body = (await res.json()) as { success?: boolean; data?: { username?: string } };
-      if (!body?.success || !body.data?.username) {
+      // Real shape: { error: false, status: 200, msg: "id_found", data: { username, ... } }
+      const body = (await res.json()) as { error?: boolean; data?: { username?: string } };
+      const username = body?.data?.username;
+      if (body?.error || !username) {
         return { valid: false, displayName: null };
       }
-      return { valid: true, displayName: body.data.username };
+      return { valid: true, displayName: username };
     } catch (err) {
       this.logger.warn(`Game checker call failed for ${slug}: ${(err as Error).message}`);
       return { valid: false, displayName: null };
