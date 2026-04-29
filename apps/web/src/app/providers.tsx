@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useStore } from '@/lib/store';
 import { api, setAccessToken, setRefreshToken, onAuthFailure } from '@/lib/api';
+import { SeasonOverlay } from '@/components/layout/SeasonOverlay';
 
 function ThemeBootstrap() {
   const router       = useRouter();
@@ -23,6 +24,7 @@ function ThemeBootstrap() {
     staleTime: 60_000,
   });
   const uiMode            = platform?.uiMode ?? 'default';
+  const seasonTheme       = platform?.seasonTheme ?? 'none';
   const defaultBrandColor = platform?.defaultBrandColor;
 
   // Sync persisted tokens
@@ -66,7 +68,12 @@ function ThemeBootstrap() {
     document.documentElement.setAttribute('data-ui-mode', uiMode);
   }, [uiMode]);
 
-  return null;
+  // Season effect — applied platform-wide via attribute on <html>
+  useEffect(() => {
+    document.documentElement.setAttribute('data-season', seasonTheme);
+  }, [seasonTheme]);
+
+  return <SeasonOverlay season={seasonTheme} />;
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {

@@ -18,7 +18,7 @@ export class CatalogController {
   @Get('settings/public')
   async publicSettings() {
     // Fixed keys + all "text.*" multilingual display strings (e.g. text.heroTitle.en, text.heroTitle.km)
-    const fixed = ['khqrImageUrl', 'khqrMerchantName', 'khqrMerchantId', 'khqrAccountNo', 'khqrCity', 'announcementText', 'uiMode', 'defaultBrandColor'];
+    const fixed = ['khqrImageUrl', 'khqrMerchantName', 'khqrMerchantId', 'khqrAccountNo', 'khqrCity', 'announcementText', 'uiMode', 'defaultBrandColor', 'seasonTheme'];
     const rows = await this.prisma.setting.findMany({
       where: {
         OR: [

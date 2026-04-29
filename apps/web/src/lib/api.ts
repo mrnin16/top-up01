@@ -84,6 +84,7 @@ export const api = {
       announcementText?: string;
       uiMode?:              'default' | 'liquid' | 'anime';
       defaultBrandColor?:   string;
+      seasonTheme?:         'none' | 'summer' | 'rain' | 'snow' | 'knyear' | 'xmas';
     }>('/settings/public'),
 
   // Catalog

@@ -280,6 +280,53 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
+        <p className="mt-3 text-[11.5px]" style={{ color: 'var(--muted)' }}>
+          UI style only changes effects &amp; animations — your brand color stays the same.
+        </p>
+
+        {/* ── Season effect ─────────────────────────────────────────────── */}
+        <div className="mt-5 pt-5" style={{ borderTop: '1px dashed var(--line)' }}>
+          <h3 className="font-sora font-bold text-[14px] mb-1 m-0">Season effect</h3>
+          <p className="text-[12px] mb-3 mt-0" style={{ color: 'var(--muted)' }}>
+            Floating ambient overlay shown across the platform (snow, rain, sakura, …).
+          </p>
+
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+            {([
+              { value: 'none',   label: 'Off',          icon: '∅', bg: 'linear-gradient(135deg,#f1f3f8,#e6e8ef)', accent: '#9aa1b3' },
+              { value: 'summer', label: 'Summer',       icon: '☀', bg: 'linear-gradient(135deg,#fff3c4,#ffd28a 60%,#ff9d6c)', accent: '#f59e0b' },
+              { value: 'rain',   label: 'Rain',         icon: '🌧', bg: 'linear-gradient(135deg,#a1c4fd,#c2e9fb 60%,#6889a8)', accent: '#3b82f6' },
+              { value: 'snow',   label: 'Snow',         icon: '❄', bg: 'linear-gradient(135deg,#e0eaff,#f7faff 60%,#cad7ee)', accent: '#60a5fa' },
+              { value: 'knyear', label: 'Khmer NY',     icon: '🌺', bg: 'linear-gradient(135deg,#ffb066,#e74c3c 60%,#b91c1c)', accent: '#dc2626' },
+              { value: 'xmas',   label: 'Christmas',    icon: '🎄', bg: 'linear-gradient(135deg,#bce0c4,#fff 50%,#f5b9b9)', accent: '#16a34a' },
+            ] as const).map(opt => {
+              const current = field('seasonTheme') || 'none';
+              const active  = current === opt.value;
+              return (
+                <button key={opt.value}
+                  onClick={() => set('seasonTheme', opt.value)}
+                  className="relative flex flex-col items-center gap-1.5 p-2.5 rounded-xl border-[1.5px] transition-all duration-150 text-center"
+                  style={{
+                    background:  active ? `color-mix(in oklab, ${opt.accent} 10%, var(--surface))` : 'var(--surface)',
+                    borderColor: active ? opt.accent : 'var(--line)',
+                    boxShadow:   active ? `0 0 0 3px color-mix(in oklab, ${opt.accent} 22%, transparent)` : 'var(--shadow-sm)',
+                    transform:   active ? 'translateY(-1px)' : 'none',
+                  }}>
+                  <div className="w-full h-10 rounded-lg flex items-center justify-center text-lg border"
+                    style={{ background: opt.bg, borderColor: 'rgba(0,0,0,.06)' }}>
+                    <span style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.18))' }}>{opt.icon}</span>
+                  </div>
+                  <b className="text-[11.5px] font-semibold leading-tight">{opt.label}</b>
+                  {active && (
+                    <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full grid place-items-center text-white text-[9px] font-bold"
+                      style={{ background: opt.accent }}>✓</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         {/* Default brand color */}
         <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: '1px dashed var(--line)' }}>
           <div>
