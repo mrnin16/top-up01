@@ -1256,7 +1256,7 @@ button[aria-checked="true"]:not([disabled]),
 [data-ui-mode="anime"] [class*="rounded-3xl"]:not(button):not(span):not(input):not(img),
 [data-ui-mode="anime"] [class*="rounded-[22px]"]:not(img),
 [data-ui-mode="anime"] [class*="rounded-[28px]"]:not(img) {
-  border: 2px solid var(--line) !important;
+  border: 2px solid transparent !important;   /* shadow-only edge — keeps layout but removes visible ring */
   box-shadow: var(--shadow-md) !important;
   background: var(--surface);
   contain: layout style;
@@ -1264,7 +1264,7 @@ button[aria-checked="true"]:not([disabled]),
 }
 
 [data-ui-mode="anime"] [class*="rounded-xl"]:not(button):not(span):not(input):not(label):not([role="switch"]):not(img) {
-  border: 2px solid var(--line) !important;
+  border: 2px solid transparent !important;
   box-shadow: var(--shadow-sm) !important;
 }
 
@@ -1276,7 +1276,7 @@ button[aria-checked="true"]:not([disabled]),
 [data-ui-mode="anime"] button.btn-busy {
   border-width: 2px;
   border-style: solid;
-  border-color: var(--line);
+  border-color: transparent;            /* chunky shadow alone provides depth — no visible ring on idle buttons */
   box-shadow: var(--press-shadow) !important;
   font-weight: 700 !important;
   letter-spacing: 0.02em;

@@ -11,7 +11,6 @@ function ThemeBootstrap() {
   const pathname     = usePathname();
   const brandColor            = useStore(s => s.brandColor);
   const brandColorCustomized  = useStore(s => s.brandColorCustomized);
-  const setBrand              = useStore(s => s.setBrand);
   const dark                  = useStore(s => s.dark);
   const accessToken  = useStore(s => s.accessToken);
   const refreshToken = useStore(s => s.refreshToken);
@@ -48,29 +47,35 @@ function ThemeBootstrap() {
   }, [router, pathname, clearAuth]);
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--brand', brandColor);
-  }, [brandColor]);
-
-  useEffect(() => {
     document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   }, [dark]);
 
-  // Each season carries its own default brand color so the whole platform stays
-  // visually consistent with the current ambient overlay. Users who explicitly
-  // picked a color keep theirs (brandColorCustomized=true).
+  // Brand color resolution (priority order):
+  //   1. User explicitly customized → use their color.
+  //   2. A season is active → use that season's signature color, so the whole
+  //      platform stays visually consistent with the ambient overlay.
+  //   3. Otherwise → clear the inline override so each UI mode's CSS-defined
+  //      brand color wins (default = blue, anime = sakura pink, etc.).
   useEffect(() => {
-    if (brandColorCustomized) return;
+    const root = document.documentElement;
+    if (brandColorCustomized) {
+      root.style.setProperty('--brand', brandColor);
+      return;
+    }
     const seasonBrand: Record<string, string> = {
-      none:   '#2563eb',
       summer: '#f59e0b',
       rain:   '#3b82f6',
       snow:   '#60a5fa',
       knyear: '#dc2626',
       xmas:   '#16a34a',
     };
-    const color = seasonBrand[seasonTheme] ?? seasonBrand.none;
-    setBrand(color, false); // false = don't mark as user-customized
-  }, [seasonTheme, brandColorCustomized, setBrand]);
+    const seasonColor = seasonBrand[seasonTheme];
+    if (seasonColor) {
+      root.style.setProperty('--brand', seasonColor);
+    } else {
+      root.style.removeProperty('--brand');
+    }
+  }, [brandColor, brandColorCustomized, seasonTheme]);
 
   // Liquid Glass UI mode — applied platform-wide via attribute on <html>
   useEffect(() => {
