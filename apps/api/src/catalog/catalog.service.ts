@@ -1,8 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  GAME_CHECKER_SLUG_MAP,
+  RAPIDAPI_BASE_URL,
+  RAPIDAPI_HOST,
+  RAPIDAPI_KEY,
+} from './game-checker.constants';
 
 @Injectable()
 export class CatalogService {
+  private readonly logger = new Logger(CatalogService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   getCategories() {
@@ -50,10 +58,34 @@ export class CatalogService {
     const product = await this.prisma.product.findUnique({ where: { slug } });
     if (!product) throw new NotFoundException('Product not found');
 
-    // Mock validation — real provider would call game API
-    const valid = gameUserId.length >= 6 && zoneId.length >= 3;
-    if (!valid) return { valid: false, displayName: null };
+    const gamePath = GAME_CHECKER_SLUG_MAP[slug];
+    if (!gamePath) {
+      // No external checker wired up for this product — fall back to a basic
+      // length check so the UI still gates the "Pay" button on plausible input.
+      const valid = gameUserId.length >= 6 && zoneId.length >= 3;
+      return { valid, displayName: valid ? 'LinaG_★' : null };
+    }
 
-    return { valid: true, displayName: 'LinaG_★' };
+    try {
+      const url = `${RAPIDAPI_BASE_URL}/${gamePath}/${encodeURIComponent(gameUserId)}/${encodeURIComponent(zoneId)}`;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'X-RapidAPI-Key':  RAPIDAPI_KEY,
+          'X-RapidAPI-Host': RAPIDAPI_HOST,
+        },
+      });
+
+      if (!res.ok) return { valid: false, displayName: null };
+
+      const body = (await res.json()) as { success?: boolean; data?: { username?: string } };
+      if (!body?.success || !body.data?.username) {
+        return { valid: false, displayName: null };
+      }
+      return { valid: true, displayName: body.data.username };
+    } catch (err) {
+      this.logger.warn(`Game checker call failed for ${slug}: ${(err as Error).message}`);
+      return { valid: false, displayName: null };
+    }
   }
 }
