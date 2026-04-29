@@ -39,6 +39,7 @@ export function DetailClient({ slug }: Props) {
   const [gameUserId,  setGameUserId]  = useState('');
   const [zoneId,      setZoneId]      = useState('');
   const [accountInfo, setAccountInfo] = useState<{ valid: boolean; displayName: string | null } | null>(null);
+  const [validating,  setValidating]  = useState(false);
 
   // Payment
   const [payMethod, setPayMethod] = useState<'khqr' | 'bank' | 'card'>('khqr');
@@ -77,12 +78,15 @@ export function DetailClient({ slug }: Props) {
   const debRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
     if (method !== 'direct' || gameUserId.length < 6 || zoneId.length < 3) {
-      setAccountInfo(null); return;
+      setAccountInfo(null); setValidating(false); return;
     }
+    setAccountInfo(null);
+    setValidating(true);
     clearTimeout(debRef.current);
     debRef.current = setTimeout(async () => {
       try { setAccountInfo(await api.validateAccount(slug, { gameUserId, zoneId })); }
-      catch { setAccountInfo(null); }
+      catch { setAccountInfo({ valid: false, displayName: null }); }
+      finally { setValidating(false); }
     }, 400);
     return () => clearTimeout(debRef.current);
   }, [gameUserId, zoneId, method, slug]);
@@ -95,7 +99,8 @@ export function DetailClient({ slug }: Props) {
   const fee       = pkg ? computeFeeCents(Math.round(effSub * 100)) / 100 : 0;
   const total     = +(effSub + fee).toFixed(2);
 
-  const idValid   = method === 'code' || (gameUserId.length >= 6 && zoneId.length >= 3);
+  const idValid   = method === 'code'
+    || (gameUserId.length >= 6 && zoneId.length >= 3 && accountInfo?.valid === true);
   const ready     = !!(pkg && idValid);
 
   // ── WebSocket (live status update) ───────────────────────────────────────
@@ -415,10 +420,22 @@ export function DetailClient({ slug }: Props) {
                   </div>
                 </div>
               </div>
-              {accountInfo?.valid && (
+              {validating && (
+                <div className="flex items-center gap-2 mt-2 p-2.5 rounded-xl text-[11.5px]"
+                  style={{ background:'var(--surface-2)', color:'var(--muted)' }}>
+                  <span className="w-3 h-3 rounded-full inline-block" style={{ background:'var(--brand)', animation:'pulse 1.2s infinite' }}/> {t('verifying')}
+                </div>
+              )}
+              {!validating && accountInfo?.valid && (
                 <div className="flex items-center gap-2 mt-2 p-2.5 rounded-xl text-[11.5px]"
                   style={{ background:'color-mix(in oklab, var(--success) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--success) 25%, var(--line))' }}>
                   <span style={{ color:'var(--success)' }}>✓</span> {t('verified')} <b>{accountInfo.displayName}</b>
+                </div>
+              )}
+              {!validating && accountInfo && !accountInfo.valid && (
+                <div className="flex items-center gap-2 mt-2 p-2.5 rounded-xl text-[11.5px]"
+                  style={{ background:'color-mix(in oklab, var(--danger) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--danger) 25%, var(--line))', color:'var(--danger)' }}>
+                  <span>✕</span> {t('accountNotFound')}
                 </div>
               )}
             </div>
@@ -547,10 +564,22 @@ export function DetailClient({ slug }: Props) {
                   </div>
                 </div>
               </div>
-              {accountInfo?.valid&&(
+              {validating&&(
+                <div className="flex items-center gap-2 mt-2.5 p-3 rounded-xl text-[12.5px]"
+                  style={{ background:'var(--surface-2)', color:'var(--muted)' }}>
+                  <span className="w-3 h-3 rounded-full inline-block" style={{ background:'var(--brand)', animation:'pulse 1.2s infinite' }}/> {t('verifying')}
+                </div>
+              )}
+              {!validating&&accountInfo?.valid&&(
                 <div className="flex items-center gap-2 mt-2.5 p-3 rounded-xl text-[12.5px]"
                   style={{ background:'color-mix(in oklab, var(--success) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--success) 30%, var(--line))' }}>
                   <span style={{ color:'var(--success)' }}>✓</span> {t('verified')} <b>{accountInfo.displayName}</b> — {product.title}, {t('zoneLabel')} {zoneId}
+                </div>
+              )}
+              {!validating&&accountInfo&&!accountInfo.valid&&(
+                <div className="flex items-center gap-2 mt-2.5 p-3 rounded-xl text-[12.5px]"
+                  style={{ background:'color-mix(in oklab, var(--danger) 8%, var(--surface))', border:'1px solid color-mix(in oklab, var(--danger) 30%, var(--line))', color:'var(--danger)' }}>
+                  <span>✕</span> {t('accountNotFound')}
                 </div>
               )}
             </div>
@@ -584,6 +613,7 @@ export function DetailClient({ slug }: Props) {
               ['Currency',     product.currencyLabel],
               [t('method'),     method==='direct'?t('directTopup'):t('voucherCode')],
               ...(method==='direct'&&gameUserId?[[t('account'),`${gameUserId} · ${t('zoneLabel')} ${zoneId||'—'}`]]:[] as any),
+              ...(method==='direct'&&accountInfo?.valid&&accountInfo.displayName?[[t('username'),accountInfo.displayName]]:[] as any),
               ['Package',      pkg?`${pkg.amount.toLocaleString()}${pkg.bonus?` +${pkg.bonus}`:''} ${product.currencyLabel}`:'—'],
               ...(discount>0?[['Discount',`-$${discount.toFixed(2)}`]]:[] as any),
               ['Service fee',  `$${fee.toFixed(2)}`],
